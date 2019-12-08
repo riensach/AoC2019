@@ -12,10 +12,9 @@ $inputData = ("3,8,1001,8,10,8,105,1,0,0,21,30,51,72,81,94,175,256,337,418,99999
 
 //$inputData = ("3,0,4,0,99");
 //
-//$inputData = ("3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0");
-$inputData = ("3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,
-27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5");
-
+//
+//$inputData = ("3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10");
+//$inputData = ("3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5");
 $arrayInfo = explode(",",$inputData);
 
 
@@ -38,44 +37,54 @@ $arrayLength = count($arrayInfo);
                         $iterations++;
                         $values = [$firstValue, $secondValue, $thirdValue, $fourthValue, $fifthValue];
                         if (count($values) == count(array_unique($values))) {
-                            $processor1 = new processCode($firstValue, $arrayInfo);
+                            $processor1 = new processCode($firstValue, $arrayInfo, 1);                            
+                            $processor1->processCodeFunction();
                             $outputValue1 = $processor1->output;
-                            $processor2 = new processCode($secondValue, $arrayInfo);
+                            $processor2 = new processCode($secondValue, $arrayInfo, 2);
+                           // echo $outputValue1;
                             $processor2->updateInput($outputValue1);
-                            $processor2->processCode();
+                            $processor2->processCodeFunction();
                             $outputValue2 = $processor2->output;
-                            $processor3 = new processCode($thirdValue, $arrayInfo);
+                            $processor3 = new processCode($thirdValue, $arrayInfo, 3);
+                           // echo $outputValue2;
                             $processor3->updateInput($outputValue2);
-                            $processor3->processCode();
+                            $processor3->processCodeFunction();
                             $outputValue3 = $processor3->output;
-                            $processor4 = new processCode($fourthValue, $arrayInfo);
+                            $processor4 = new processCode($fourthValue, $arrayInfo, 4);
+                           // echo $outputValue3;
                             $processor4->updateInput($outputValue3);
-                            $processor4->processCode();
+                            $processor4->processCodeFunction();
                             $outputValue4 = $processor4->output;
-                            $processor5 = new processCode($fifthValue, $arrayInfo);
+                            $processor5 = new processCode($fifthValue, $arrayInfo, 5);
+                           // echo $outputValue4;
                             $processor5->updateInput($outputValue4);
-                            $processor5->processCode();
+                            $processor5->processCodeFunction();
                             $outputValue5 = $processor5->output;
                             while($processor1->halted<>1 || $processor2->halted<>1 || $processor3->halted<>1 || $processor4->halted<>1 || $processor5->halted<>1) {
-                                
+                              //  echo $outputValue5;
                                 $processor1->updateInput($outputValue5);
-                                $processor1->processCode();
-                                $outputValue1 = $processor1->output;
+                                $processor1->processCodeFunction();
+                                $outputValue1 = $processor1->output;                                
+                              //  echo $outputValue1;
                                 $processor2->updateInput($outputValue1);
-                                $processor2->processCode();
-                                $outputValue2 = $processor2->output;
+                                $processor2->processCodeFunction();
+                                $outputValue2 = $processor2->output;                              
+                              //  echo $outputValue2;
                                 $processor3->updateInput($outputValue2);
-                                $processor3->processCode();
-                                $outputValue3 = $processor3->output;
+                                $processor3->processCodeFunction();
+                                $outputValue3 = $processor3->output;                              
+                              //  echo $outputValue3;
                                 $processor4->updateInput($outputValue3);
-                                $processor4->processCode();
-                                $outputValue4 = $processor4->output;
+                                $processor4->processCodeFunction();
+                                $outputValue4 = $processor4->output;                              
+                              //  echo $outputValue4;
                                 $processor5->updateInput($outputValue4);
-                                $processor5->processCode();
+                                $processor5->processCodeFunction();
                                 $outputValue5 = $processor5->output;  
-                                echo "<br>$firstValue + $secondValue + $thirdValue + $fourthValue + $fifthValue<br>$outputValue1 - $outputValue2 - $outputValue3 - $outputValue4 - $outputValue5";
+                               // echo "<br>$firstValue + $secondValue + $thirdValue + $fourthValue + $fifthValue<br>$outputValue1 - $outputValue2 - $outputValue3 - $outputValue4 - $outputValue5";
+                              //  echo "<br>Halted status: " .$processor1->halted.$processor2->halted.$processor3->halted.$processor4->halted.$processor5->halted."<br>";
+                                
                             }
-                            echo "never here";
                             if($outputValue5 > $maxValueSent) {
                                 $maxValueSent = $outputValue5;
                                 $combination = "$firstValue + $secondValue + $thirdValue + $fourthValue + $fifthValue";
@@ -109,13 +118,15 @@ $arrayLength = count($arrayInfo);
     public $phaseCode;
     public $processorMemory;
     public $processorPosition;
+    public $processorID;
     public $halted = 0;
     public $inputValueRequest = 0;
     
-    function __construct($phaseCode, $processorMemory) {
+    function __construct($phaseCode, $processorMemory, $processorID) {
         $this->phaseCode = $phaseCode;
         $this->processorMemory = $processorMemory;
         $this->processorPosition = 0;
+        $this->processorID = $processorID;
        // echo "<br>Starting processing. With position:".$this->inputCode."<br>";
     }
     
@@ -123,10 +134,14 @@ $arrayLength = count($arrayInfo);
         $this->inputCode = $inputCode;
     }
     
-    public function processCode() {
+    public function processCodeFunction() {
         $inputValue = $this->phaseCode;
+        
         if($this->inputValueRequest > 0) {
             $inputValue = $this->inputCode;
+        } 
+        if($this->inputValueRequest == 1 && $this->processorID == 1) {
+            $inputValue = 0;
         } 
         $arrayInfo = $this->processorMemory;
         $arrayLength = count($arrayInfo);
@@ -218,7 +233,7 @@ $arrayLength = count($arrayInfo);
                 $position = $position + 4;
             } elseif($operation == 3) {
                 // Save input into position
-
+               // echo " - PID: ".$this->processorID." :: Input Value: ".$inputValue."<Br>";
                 $positionValue = $arrayInfo[$position+1];
                 if($arrayInfo[$position+1] < 0) {
                     $positionValue = $arrayLength - abs($positionValue);
@@ -226,6 +241,12 @@ $arrayLength = count($arrayInfo);
                 $arrayInfo[$positionValue] = $inputValue;
                 $position = $position + 2;
                 $this->inputValueRequest = $this->inputValueRequest + 1;
+                if($this->inputValueRequest > 0) {
+                    $inputValue = $this->inputCode;
+                } 
+                if($this->inputValueRequest == 1 && $this->processorID == 1) {
+                    $inputValue = 0;
+                } 
             } elseif($operation == 4) {
                 // Output only input
                 if($positionMode1==1) {
@@ -236,7 +257,8 @@ $arrayLength = count($arrayInfo);
                     if($arrayInfo[$position+1] < 0) {
                         $positionValue = $arrayLength - abs($positionValue);
                     }
-                    $value1 = $arrayInfo[$positionValue];        
+                    $value1 = $arrayInfo[$positionValue]; 
+                    
                 }
                // $positionValue = $arrayInfo[$position+1];
                 //if($arrayInfo[$position+1] < 0) {
@@ -380,6 +402,10 @@ $arrayLength = count($arrayInfo);
             }
 
         } 
+        
+        $this->processorPosition = $position;
+        
+        $this->processorMemory = $arrayInfo;
 
     }
     
