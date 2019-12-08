@@ -12,13 +12,13 @@ $inputData = ("3,225,1,225,6,6,1100,1,238,225,104,0,2,218,57,224,101,-3828,224,2
 
 //$inputData = ("3,0,4,0,99");
 //
-//$inputData = ("0101,100,-1,4,0");
+//$inputData = ("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9");
 
 $arrayInfo = explode(",",$inputData);
 
 $exit = 0;
 $position = 0;
-$inputValue = 1;
+$inputValue = 5;
 $iteration = 0;
 $arrayLength = count($arrayInfo);
 
@@ -98,10 +98,10 @@ while($exit < 1) {
         }
         
         $result = $value1 * $value2; 
-            $positionValue = $arrayInfo[$position+3];
-            if($arrayInfo[$position+3] < 0) {
-                $positionValue = $arrayLength - abs($positionValue);
-            }
+        $positionValue = $arrayInfo[$position+3];
+        if($arrayInfo[$position+3] < 0) {
+            $positionValue = $arrayLength - abs($positionValue);
+        }
         $arrayInfo[$positionValue] = $result;
         $position = $position + 4;
     } elseif($operation == 3) {
@@ -134,14 +134,134 @@ while($exit < 1) {
         
        // die();
         $position = $position + 2;
+    } elseif($operation == 5) {
+        // Jump if true        
+        if($positionMode1==1) {
+            $value1 = $arrayInfo[$position+1];
+        } else {
+            $positionValue = $arrayInfo[$position+1];
+            if($arrayInfo[$position+1] < 0) {
+                $positionValue = $arrayLength - abs($positionValue);
+            }
+            $value1 = $arrayInfo[$positionValue];        
+        }
+        
+        if($positionMode2==1) {
+            $value2 = $arrayInfo[$position+2];
+        } else {
+            $positionValue = $arrayInfo[$position+2];
+            if($arrayInfo[$position+2] < 0) {
+                $positionValue = $arrayLength - abs($arrayLength);
+            }
+            $value2 = $arrayInfo[$positionValue];            
+        }
+        if($value1<>0) {
+            $position = $value2;            
+        } else {
+            $position = $position+3;
+        }
+       // echo "DONE THIUS";
+    } elseif($operation == 6) {
+        // Jump if false      
+        if($positionMode1==1) {
+            $value1 = $arrayInfo[$position+1];
+        } else {
+            $positionValue = $arrayInfo[$position+1];
+            if($arrayInfo[$position+1] < 0) {
+                $positionValue = $arrayLength - abs($positionValue);
+            }
+            $value1 = $arrayInfo[$positionValue];        
+        }
+        
+        if($positionMode2==1) {
+            $value2 = $arrayInfo[$position+2];
+        } else {
+            $positionValue = $arrayInfo[$position+2];
+            if($arrayInfo[$position+2] < 0) {
+                $positionValue = $arrayLength - abs($arrayLength);
+            }
+            $value2 = $arrayInfo[$positionValue];            
+        }
+        if($value1==0) {
+            $position = $value2;            
+        } else {
+            $position = $position+3;
+        }
+       // echo "update position to be $value1 - $position - $positionMode1<br>";
+    } elseif($operation == 7) {
+        // Store 1 if less than
+        if($positionMode1==1) {
+            $value1 = $arrayInfo[$position+1];
+        } else {
+            $positionValue = $arrayInfo[$position+1];
+            if($arrayInfo[$position+1] < 0) {
+                $positionValue = $arrayLength - abs($positionValue);
+            }
+            $value1 = $arrayInfo[$positionValue];        
+        }
+        if($positionMode2==1) {
+            $value2 = $arrayInfo[$position+2];
+        } else {
+            $positionValue = $arrayInfo[$position+2];
+            if($arrayInfo[$position+2] < 0) {
+                $positionValue = $arrayLength - abs($arrayLength);
+            }
+            $value2 = $arrayInfo[$positionValue];            
+        }
+        
+        $storedValue = 0;
+        if($value1 < $value2) {
+            $storedValue = 1;
+        }
+        $positionValue = $arrayInfo[$position+3];
+        if($arrayInfo[$position+3] < 0) {
+            $positionValue = $arrayLength - abs($positionValue);
+        }
+        $arrayInfo[$positionValue] = $storedValue;
+        $position = $position + 4;
+        
+    } elseif($operation == 8) {
+        // Store 1 if equal
+        if($positionMode1==1) {
+            $value1 = $arrayInfo[$position+1];
+        } else {
+            $positionValue = $arrayInfo[$position+1];
+            if($arrayInfo[$position+1] < 0) {
+                $positionValue = $arrayLength - abs($positionValue);
+            }
+            $value1 = $arrayInfo[$positionValue];        
+        }
+        if($positionMode2==1) {
+            $value2 = $arrayInfo[$position+2];
+        } else {
+            $positionValue = $arrayInfo[$position+2];
+            if($arrayInfo[$position+2] < 0) {
+                $positionValue = $arrayLength - abs($arrayLength);
+            }
+            $value2 = $arrayInfo[$positionValue];            
+        }
+        
+        $storedValue = 0;
+        if($value1 == $value2) {
+            $storedValue = 1;
+        }
+        $positionValue = $arrayInfo[$position+3];
+        if($arrayInfo[$position+3] < 0) {
+            $positionValue = $arrayLength - abs($positionValue);
+        }
+        $arrayInfo[$positionValue] = $storedValue;
+        $position = $position + 4;
+
     } elseif($operation == 99) {
         // Halt
         $exit = 1;
+    } else {
+        //echo "catch all <br>";
     }
     
   // echo "position1:".$position." position2:".($position+1)." position3:".($position+2)." position4:".($position+3)." - ";
    // echo "hi2 - $position - $operation - ".count($arrayInfo)." - exit? $exit<br>";
-    
+    if($iteration>50000) exit;
 }   
 
 echo "value at position 0 is ". $arrayInfo[0];
