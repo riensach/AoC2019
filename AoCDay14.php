@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -84,7 +84,7 @@ foreach($inputArray as $key => $value) {
     $inputs = explode(", ", $values[0]);
     $outputs = explode(", ", $values[1]);
     
-    $reaction = array();    
+    $reaction = array();
     $reaction['inputs'] = array();
     $reaction['outputs'] = array();
     foreach($inputs as $key2 => $value2) {
@@ -107,7 +107,42 @@ foreach($inputArray as $key => $value) {
     
     
 }
-
+echo "<pre>";
 var_dump($minerals);
+echo "<br><br>";
 
-var_dump($mineralReactions[0]);
+var_dump($mineralReactions[6]);
+
+
+function processMineralOptions($mineralsPresent,$reactions) {
+  
+  foreach($reactions as $key => $value) {
+    $baseMinerals = $mineraslPresent;
+    
+    $requiredInputsMet = 1;
+    foreach($value['inputs'] as $key2 => $inputs) {
+    
+      if($baseMinerals[$inputs['inputMineral']] < $inputs['inputMineral']) {
+        $requiredInputsMet = 0;
+      }
+      
+    }
+    if($requiredInputsMet) {
+      foreach($value['inputs'] as $key2 => $inputs) {
+    
+        if($baseMinerals[$inputs['inputMineral']] >= $baseMinerals[$inputs['inputQuantity']]) {
+          $requiredInputsMet = 0;
+        }
+        
+      }
+      foreach($value['outputs'] as $key => $outputs) {
+      
+        
+      
+        
+      }
+    }
+      
+  }
+  
+}

@@ -1,0 +1,23 @@
+version: '2'
+services:
+  devbox:
+    build:
+      context: ./
+      dockerfile: DevBox.DockerFile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /home/rienjsach/AoC2019:/www/
+  devmysql:
+    build:
+      context: ./
+      dockerfile: MySQL.DockerFile
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ''
+      MYSQL_ALLOW_EMPTY_PASSWORD : 'yes'
+    restart: always
+    volumes:
+            - /home/rienjsach/AoC2019:/database/
