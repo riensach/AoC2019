@@ -39,11 +39,7 @@ $inputData = (".#......#...#.....#..#......#..##..#
 #..#.....#....#....#.#.......####..#
 ..............#.#...........##.#.#..");
 
-$inputData = (".#....#####...#..
-##...##.#####..##
-##...#...#.#####.
-..#.....X...###..
-..#.#.....#....##");
+
 
 $inputRows = explode("\n",$inputData);
 
@@ -69,6 +65,11 @@ while($x<=$arrayRows) {
         if($informationArray[$x][$y]=="#") {
             $asteroids[] = "$x,$y";
         }
+        if($informationArray[$x][$y]=="X" || ($x == 19 && $y == 23)) {
+            $stationVector = array($x,$y);            
+            $stationVectorX = $x;
+            $stationVectorY = $y;
+        }
         $y++;
     }
     $y = 0;
@@ -76,52 +77,106 @@ while($x<=$arrayRows) {
 }
 
 //19,23 = station
-$foundAsteroidArray = array();
+
+
+$vectors = array();
+$possibleVectors = array();
+$asteroidCount = 0;
 foreach($asteroids as $key => $value) {
-    $startingAsteroid = $value;
-    $startingPosition = explode(",",$startingAsteroid);
-    $foundAsteroids = 0;
-    foreach($asteroids as $key3 => $value3) {
-        if($value3!=$startingAsteroid) {            
-            $comparisonPosition = explode(",",$value3);
-            
-            foreach($asteroids as $key2 => $value2) {
-                if($value2!=$startingAsteroid && $value2!=$value3) {    
-                    $potentialConflict = explode(",",$value2);
-                    $dxc = $potentialConflict[0] - $startingPosition[0];
-                    $dyc = $potentialConflict[1] - $startingPosition[1];
+    
+    $startingPosition = explode(",",$value); 
+    
+    $targetVector = array($startingPosition[0],$startingPosition[1]);  
+    $dxc =  $startingPosition[0] - $stationVectorX;
+    $dyc =  $startingPosition[1] - $stationVectorY;
+    $vector = rad2deg(atan2($startingPosition[1]-$stationVectorY,$startingPosition[0]-$stationVectorX));
 
-                    $dxl = $comparisonPosition[0] - $startingPosition[0];
-                    $dyl = $comparisonPosition[1] - $startingPosition[1];
-
-                    $cross = ($dxc * $dyl - $dyc * $dxl);
-                    
-                    if($cross==0) {
-                        // conflict
-
-                        if (abs($dxl) >= abs($dyl)) {
-                            $output = $dxl > 0 ? 
-                              $startingPosition[0] <= $potentialConflict[0] && $potentialConflict[0] <= $comparisonPosition[0]:
-                              $comparisonPosition[0] <= $potentialConflict[0] && $potentialConflict[0] <= $startingPosition[0];
-                        } else {
-                            $output = $dyl > 0 ? 
-                              $startingPosition[1] <= $potentialConflict[1] && $potentialConflict[1] <= $comparisonPosition[1]:
-                              $comparisonPosition[1] <= $potentialConflict[1] && $potentialConflict[1] <= $startingPosition[1];
-                        }
-                        //echo "<br>conflict - $output - $startingAsteroid :: $value2 :: $value3 :: $cross";
-                        if($output==1) {
-                           // echo "<br>conflict - $output - $startingAsteroid :: $value2 :: $value3 :: $cross";
-                            continue 2;
-                            
-                        }
-                    }
-                }
-            }
-            $foundAsteroids++;
-        }
+    //$vector = acos(dot($stationVector, $targetVector) / (norm($stationVector) * norm($targetVector)));
+    
+    //$vector = ($dxc + $dyc)^2;
+    
+    //$vector = atan2($dxc,$dyc)* 180 / M_PI;
+    
+    
+    
+    
+    
+    //angle = math.atan2(math.abs(x-a),math.abs(y-b))
+    
+    //echo "$vector - $stationVectorX,$stationVectorY :: ".$startingPosition[0].",".$startingPosition[1]."<br>";
+    //$vector = $vector * 180 / pi();
+    if(!isset($vectors[$vector])){
+        $vectors[$vector] = array();
     }
-    $foundAsteroidArray[$startingAsteroid] = $foundAsteroids;
+    $vectors[$vector][] = $value;
+    if(!in_array($vector, $possibleVectors)) {
+        $possibleVectors[] = $vector;        
+    }
+    $asteroidCount++;
 }
 
-arsort($foundAsteroidArray);
-var_dump($foundAsteroidArray);
+krsort($vectors);
+//var_dump($vectors);
+
+arsort($possibleVectors);
+//var_dump($possibleVectors);
+
+ 
+
+  
+$asteroidLeft = $asteroidCount;
+$destroidAsteroids =array();
+foreach($possibleVectors as $key => $vector) {
+    if(isset($vectors[$vector])) {
+        $closestKey = -1;
+        $closestX = 0;
+        $closestY = 0;
+        $distance = 99999999999999999999999999999;
+        foreach($vectors[$vector] as $key2 => $possibleTarget) {
+            $targetDimensions = explode(",",$possibleTarget); 
+            $dxc =  $targetDimensions[0] - $stationVectorX;
+            $dyc =  $targetDimensions[1] - $stationVectorY;
+            if($closestKey > -1) {
+                $dist = abs($targetDimensions[0] - $stationVectorX) + abs($targetDimensions[1] - $stationVectorY);
+                if($dist < $distance) {                
+                    $closestX = $targetDimensions[0];
+                    $closestY = $targetDimensions[1];
+                    $closestKey = $key2;                    
+                }
+            } else {                
+                $closestX = $targetDimensions[0];
+                $closestY = $targetDimensions[1];
+                $closestKey = $key2;
+            }
+        }
+        $closestVector = $vectors[$vector][$closestKey];
+        echo "For vector $vector the closest vector left is $closestVector<br>";
+        $destroidAsteroids[] = $closestVector;
+        unset($vectors[$vector][$closestKey]);
+    }
+    
+    if(count($vectors[$vector]) < 1) {
+        unset($vectors[$vector]);
+    }
+    
+}
+
+
+
+var_dump($destroidAsteroids);
+
+
+
+echo $destroidAsteroids[199];
+
+
+
+$startingPosition = explode(",",$destroidAsteroids[199]); 
+
+$output = ($startingPosition[1] * 100) + $startingPosition[0];
+
+echo "<br>$output";
+
+//1714 = too high
+
+//1417 = correct
