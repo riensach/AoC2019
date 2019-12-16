@@ -108,30 +108,59 @@ foreach($inputArray as $key => $value) {
     
 }
 // phpinfo();
-var_dump($mineralReactions);
+//var_dump($mineralReactions);
 var_dump($minerals);
+//$minerals = processMineralReaction($minerals,$mineralReactions[6]);
+//$candoreaction = checkRequiredMinerals($minerals,$mineralReactions[1]);
+var_dump($mineralReactions[1]);
+
+
+
+
+
+   
+    
 $minerals['ORE'] = 200;
-$minerals = processMineralReaction($minerals,$mineralReactions[6]);
-$candoreaction = checkRequiredMinerals($minerals,$mineralReactions[1]);
-var_dump($minerals);
+    $minerals = getRequiredMinerals($minerals,$mineralReactions,'FUEL',1);
 
 
 
 
 
+function getRequiredMinerals($minerals,$reactions,$desiredMineral,$desiredMineralQuantity) {
+    
+    while($minerals[$desiredMineral] < $desiredMineralQuantity) {
+        echo $desiredMineral . " - " .$minerals[$desiredMineral] . " - " . $desiredMineralQuantity . " - $desiredMineral<br>";
+        foreach($reactions as $key => $value) {
+            if($value['outputs'][0]['outputMineral'] == $desiredMineral) {
+                // Possible reaction option
+                //echo "possible reaction options: ".$key."<br>";
+                // Check if we have what we need?
 
-
-function mineralValue($mineralReactions, $minerals) {
-    // FUEL is king
-    $minerals['FUEL'] = 100000000000;
-    $startingValue = 100000000000;
-    foreach($mineralReactions as $key => $reactions) {
-        
-        
+                $requiredMinerals = 1;
+                foreach($value['inputs'] as $key2 => $value2) {
+                    while($value2['inputQuantity'] > $minerals[$value2['inputMineral']]) {
+                        $quantityNeeded = $value2['inputQuantity'] - $minerals[$value2['inputMineral']];
+                        $minerals = getRequiredMinerals($minerals,$reactions,$value2['inputMineral'],$quantityNeeded);
+                        echo "We don't have enough - trying to get more ".$value2['inputMineral']." - $quantityNeeded - ".$value['outputs'][0]['outputMineral']."<br>";                  
+                    }                
+                }
+                if($requiredMinerals == 1) {
+                    echo "We have what we need<br>";
+                    $minerals = processMineralReaction($minerals,$reactions[$key]);                
+                }
+            }
+        } 
     }
-    
-    
+        echo $desiredMineral . " :: " .$minerals[$desiredMineral] . " - " . $desiredMineralQuantity . " - $desiredMineral<br>";
+    return $minerals;    
 }
+
+var_dump($minerals);
+echo "end";
+
+
+
 
 
 
