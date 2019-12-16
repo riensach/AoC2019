@@ -67,13 +67,38 @@ $input = ("11 RVCS => 8 CBMDT
 153 ORE => 4 MLJK
 1 BWXGC => 6 NQZTV");
 
-$input = ("9 ORE => 2 A
-8 ORE => 3 B
-7 ORE => 5 C
-3 A, 4 B => 1 AB
-5 B, 7 C => 1 BC
-4 C, 1 A => 1 CA
-2 AB, 3 BC, 4 CA => 1 FUEL");
+//175452 too low
+
+$input = ("171 ORE => 8 CNZTR
+7 ZLQW, 3 BMBT, 9 XCVML, 26 XMNCP, 1 WPTQ, 2 MZWV, 1 RJRHP => 4 PLWSL
+114 ORE => 4 BHXH
+14 VRPVC => 6 BMBT
+6 BHXH, 18 KTJDG, 12 WPTQ, 7 PLWSL, 31 FHTLT, 37 ZDVW => 1 FUEL
+6 WPTQ, 2 BMBT, 8 ZLQW, 18 KTJDG, 1 XMNCP, 6 MZWV, 1 RJRHP => 6 FHTLT
+15 XDBXC, 2 LTCX, 1 VRPVC => 6 ZLQW
+13 WPTQ, 10 LTCX, 3 RJRHP, 14 XMNCP, 2 MZWV, 1 ZLQW => 1 ZDVW
+5 BMBT => 4 WPTQ
+189 ORE => 9 KTJDG
+1 MZWV, 17 XDBXC, 3 XCVML => 2 XMNCP
+12 VRPVC, 27 CNZTR => 2 XDBXC
+15 KTJDG, 12 BHXH => 5 XCVML
+3 BHXH, 2 VRPVC => 7 MZWV
+121 ORE => 7 VRPVC
+7 XCVML => 6 RJRHP
+5 BHXH, 4 VRPVC => 5 LTCX"); ## 2210736 
+
+$input = ("2 VPVL, 7 FWMGM, 2 CXFTF, 11 MNCFX => 1 STKFG
+17 NVRVD, 3 JNWZP => 8 VPVL
+53 STKFG, 6 MNCFX, 46 VJHF, 81 HVMC, 68 CXFTF, 25 GNMV => 1 FUEL
+22 VJHF, 37 MNCFX => 5 FWMGM
+139 ORE => 4 NVRVD
+144 ORE => 7 JNWZP
+5 MNCFX, 7 RFSQX, 2 FWMGM, 2 VPVL, 19 CXFTF => 3 HVMC
+5 VJHF, 7 MNCFX, 9 VPVL, 37 CXFTF => 6 GNMV
+145 ORE => 6 MNCFX
+1 NVRVD => 8 CXFTF
+1 VJHF, 6 MNCFX => 4 RFSQX
+176 ORE => 6 VJHF"); ## 180697 
 
 $inputArray = explode("\n", $input);
 $minerals = array();
@@ -107,57 +132,37 @@ foreach($inputArray as $key => $value) {
     
     
 }
-// phpinfo();
-//var_dump($mineralReactions);
-var_dump($minerals);
-//$minerals = processMineralReaction($minerals,$mineralReactions[6]);
-//$candoreaction = checkRequiredMinerals($minerals,$mineralReactions[1]);
-var_dump($mineralReactions[1]);
 
-
-
-
-
-   
-    
-$minerals['ORE'] = 200;
     $minerals = getRequiredMinerals($minerals,$mineralReactions,'FUEL',1);
 
 
 
-
+global $oreRequired;
 
 function getRequiredMinerals($minerals,$reactions,$desiredMineral,$desiredMineralQuantity) {
-    
-    while($minerals[$desiredMineral] < $desiredMineralQuantity) {
-        echo $desiredMineral . " - " .$minerals[$desiredMineral] . " - " . $desiredMineralQuantity . " - $desiredMineral<br>";
+    global $oreRequired;
+    if($desiredMineral=='ORE') {
+        $minerals['ORE'] = $minerals['ORE'] + $desiredMineralQuantity;
+        $oreRequired += $desiredMineralQuantity;
+        return $minerals;
+    }
+
         foreach($reactions as $key => $value) {
             if($value['outputs'][0]['outputMineral'] == $desiredMineral) {
-                // Possible reaction option
-                //echo "possible reaction options: ".$key."<br>";
-                // Check if we have what we need?
-
-                $requiredMinerals = 1;
                 foreach($value['inputs'] as $key2 => $value2) {
                     while($value2['inputQuantity'] > $minerals[$value2['inputMineral']]) {
                         $quantityNeeded = $value2['inputQuantity'] - $minerals[$value2['inputMineral']];
-                        $minerals = getRequiredMinerals($minerals,$reactions,$value2['inputMineral'],$quantityNeeded);
-                        echo "We don't have enough - trying to get more ".$value2['inputMineral']." - $quantityNeeded - ".$value['outputs'][0]['outputMineral']."<br>";                  
+                        $minerals = getRequiredMinerals($minerals,$reactions,$value2['inputMineral'],$quantityNeeded);               
                     }                
                 }
-                if($requiredMinerals == 1) {
-                    echo "We have what we need<br>";
-                    $minerals = processMineralReaction($minerals,$reactions[$key]);                
-                }
+                $minerals = processMineralReaction($minerals,$reactions[$key]);                
             }
         } 
-    }
-        echo $desiredMineral . " :: " .$minerals[$desiredMineral] . " - " . $desiredMineralQuantity . " - $desiredMineral<br>";
+
     return $minerals;    
 }
 
-var_dump($minerals);
-echo "end";
+echo "Total ORE required: $oreRequired";
 
 
 
