@@ -21,9 +21,9 @@ $array = implode(",", $arrayInfo);
 $x = 0;
 $y = 0;
 $gridArray = array();
-while($x < 250) {
+while($x < 100) {
     $gridArray[$x] = array();
-    while($y < 250) {
+    while($y < 100) {
         $gridArray[$x][$y] = '.';
         $y++;
     }
@@ -43,6 +43,7 @@ while($processor1->halted == 0) {
     } else {
         $inputCode = 0; 
     }
+    echo "$inputCode - ";
     $processor1->updateInput($inputCode);
     $processor1->processCodeFunction();
     $outputValue1 = $processor1->output;
@@ -51,12 +52,12 @@ while($processor1->halted == 0) {
         echo "paint white - ";
     } else {
         $gridArray[$gridPositionX][$gridPositionY] = ".";
-        echo "paint black - ";
+        echo "paint black($outputValue1) - ";
     }
     $paintedPanels[$gridPositionX.",".$gridPositionY] = 1;
     $processor1->processCodeFunction();
     $outputValue2 = $processor1->output;
-    if($outputValue1 == 1) {
+    if($outputValue2 == 1) {
         // turn right 90 degrees
         $orientation->rotate(1);
         $currentOrt = $orientation->first();
@@ -65,7 +66,7 @@ while($processor1->halted == 0) {
         // turn left 90 degrees
         $orientation->rotate(-1);
         $currentOrt = $orientation->first();
-        echo "turn left 90 degrees - $currentOrt :: $gridPositionX,$gridPositionY<br>";
+        echo "turn left 90 degrees($outputValue2) - $currentOrt :: $gridPositionX,$gridPositionY<br>";
     }
     if($orientation->first() == 'N') {
         $gridPositionX--;
@@ -93,6 +94,7 @@ function printGrid($trackGridInputArray) {
     }
     echo "</code>";
 }
+// BFPUZUPC
    //$outputValue = processCode(0,$arrayInfo);
     
    //echo "Output: $outputValue1";
@@ -116,7 +118,6 @@ function printGrid($trackGridInputArray) {
     public $operation;
     
     function __construct($phaseCode, $processorMemory, $processorID) {
-        $this->phaseCode = $phaseCode;
         $this->processorMemory = $processorMemory;
         $this->processorPosition = 0;
         $this->processorID = $processorID;
@@ -228,6 +229,7 @@ function printGrid($trackGridInputArray) {
                 $this->output = $output;
                 $this->processorPosition = $this->processorPosition + 2;
                 $exit = 1;
+                return;
             } elseif($this->operation == 5) {
                 // Jump if true        
                 $value1 = $this->getReference($this->positionMode1,1);                
