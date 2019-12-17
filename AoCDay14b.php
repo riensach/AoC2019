@@ -105,10 +105,25 @@ foreach($inputArray as $key => $value) {
 }
 
 global $oreRequired;
-
-$minerals = getRequiredMinerals($minerals,$mineralReactions,'FUEL',1);
-
-echo "Total ORE required: $oreRequired";
+$targetFuel = 5613122;
+$time_pre = microtime(true);
+$empty = 1;
+while($minerals['FUEL'] < $targetFuel) {
+    $minerals = getRequiredMinerals($minerals,$mineralReactions,'FUEL',1);
+    $empty = 0;
+    foreach($minerals as $key => $value) {
+        if($value > 0) {
+            $empty = 1;
+        }
+    }
+    if($empty == 0) {
+        echo "hi";
+        break;
+    }
+}
+$time_post = microtime(true);
+$exec_time = $time_post - $time_pre;
+echo "Total ORE required: $oreRequired found in $exec_time seconds";
 var_dump($minerals);
 
 function getRequiredMinerals($minerals,$reactions,$desiredMineral,$desiredMineralQuantity) {
@@ -132,45 +147,26 @@ function getRequiredMinerals($minerals,$reactions,$desiredMineral,$desiredMinera
                     while($value2['inputQuantity'] > $minerals[$value2['inputMineral']]) {
                         $quantityNeeded = $value2['inputQuantity'] - $minerals[$value2['inputMineral']];
                         $minerals = getRequiredMinerals($minerals,$reactions,$value2['inputMineral'],$quantityNeeded);   
-                        echo "Get me $quantityNeeded more ".$value2['inputMineral']." for reacion $key<br>";
+                        //echo "Get me $quantityNeeded more ".$value2['inputMineral']." for reacion $key<br>";
                     }                
                 }
-                $minerals = processMineralReaction($minerals,$reactions[$key]);                
+                $minerals = processMineralReaction($minerals,$reactions[$key]);  
+                return $minerals; 
             }
         } 
 
-    return $minerals;    
+       
 }
 
-function checkRequiredMinerals($mineralsPresent,$reaction) {
-    $requiredInputsMet = 1;
-    foreach($reaction['inputs'] as $key2 => $inputs) {
-          //echo $baseMinerals[$inputs['inputMineral']] . " - " .$inputs['inputQuantity'] . " - ".$inputs['inputMineral']."<br>";
-          if($mineralsPresent[$inputs['inputMineral']] < $inputs['inputQuantity']) {
-            $requiredInputsMet = 0;
-          }
-    }
-    return (bool) $requiredInputsMet;
-}
 
 function processMineralReaction($mineralsPresent,$reaction) {  
-    $candoreaction = checkRequiredMinerals($mineralsPresent,$reaction);
-    if($candoreaction) {
-        foreach($reaction['inputs'] as $key2 => $inputs) {
-            if($mineralsPresent[$inputs['inputMineral']] >= $inputs['inputQuantity']) {
-                $mineralsPresent[$inputs['inputMineral']] = $mineralsPresent[$inputs['inputMineral']] - $inputs['inputQuantity'];
-                if($mineralsPresent[$inputs['inputMineral']] < 0) {
-                    die("something went wrong - below 0");
-                }
-            }
+    foreach($reaction['inputs'] as $key2 => $inputs) {
+        if($mineralsPresent[$inputs['inputMineral']] >= $inputs['inputQuantity']) {
+            $mineralsPresent[$inputs['inputMineral']] -= $inputs['inputQuantity'];
         }
-        foreach($reaction['outputs'] as $key => $outputs) {        
-              $mineralsPresent[$outputs['outputMineral']] = $mineralsPresent[$outputs['outputMineral']] + $outputs['outputQuantity'];        
-        }
-    } else {
-        echo "ERROR<br>";
-        var_dump($mineralsPresent);
-        var_dump($reaction);
-    }   
+    }
+    foreach($reaction['outputs'] as $key => $outputs) {        
+          $mineralsPresent[$outputs['outputMineral']] += $outputs['outputQuantity'];        
+    }  
     return $mineralsPresent; 
 }

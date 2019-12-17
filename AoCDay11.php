@@ -24,10 +24,10 @@ $array = implode(",", $arrayInfo);
 $x = 0;
 $y = 0;
 $gridArray = array();
-while($x < 100) {
+while($x < 50) {
     $gridArray[$x] = array();
-    while($y < 100) {
-        $gridArray[$x][$y] = 0;
+    while($y < 50) {
+        $gridArray[$x][$y] = '.';
         $y++;
     }
     $y = 0;
@@ -35,31 +35,42 @@ while($x < 100) {
 }
 
 
-
-$gridPositionX = 50;
-$gridPositionY = 50;
+//117 is too low
+$gridPositionX = 25;
+$gridPositionY = 25;
 $facing = 'N';
 $orientation = new \Ds\Deque(['N', 'E', 'S', 'W']);
 $processor1 = new processCode(0, $arrayInfo, 2);
-echo "hlleo";
-die();
+$paintedPanels = array();
 while($processor1->halted == 0) {
+    if($gridArray[$gridPositionX][$gridPositionY] == "#") {
+        $inputCode = 1;
+    } else {
+        $inputCode = 0; 
+    }
+    $processor1->updateInput($inputCode);
     $processor1->processCodeFunction();
     $outputValue1 = $processor1->output;
     if($outputValue1 == 1) {
         $gridArray[$gridPositionX][$gridPositionY] = "#";
+        echo "paint white - ";
     } else {
         $gridArray[$gridPositionX][$gridPositionY] = ".";
+        echo "paint black - ";
     }
-
+    $paintedPanels[$gridPositionX.",".$gridPositionY] = 1;
     $processor1->processCodeFunction();
     $outputValue2 = $processor1->output;
     if($outputValue1 == 1) {
         // turn right 90 degrees
         $orientation->rotate(1);
+        $currentOrt = $orientation->first();
+        echo "turn right 90 degrees - $currentOrt :: $gridPositionX,$gridPositionY<br>";
     } else {
         // turn left 90 degrees
         $orientation->rotate(-1);
+        $currentOrt = $orientation->first();
+        echo "turn left 90 degrees - $currentOrt :: $gridPositionX,$gridPositionY<br>";
     }
     if($orientation->first() == 'N') {
         $gridPositionX--;
@@ -72,7 +83,8 @@ while($processor1->halted == 0) {
     }
 
 }
-
+$paintedPanelsCount = count($paintedPanels);
+echo "Painted a total of $paintedPanelsCount panels<br>";
 printGrid($gridArray);
 
 function printGrid($trackGridInputArray) {
@@ -88,7 +100,7 @@ function printGrid($trackGridInputArray) {
 }
    //$outputValue = processCode(0,$arrayInfo);
     
-   echo "Output: $outputValue1";
+   //echo "Output: $outputValue1";
            
         
  class processCode {  
