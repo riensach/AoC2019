@@ -105,7 +105,7 @@ foreach($inputArray as $key => $value) {
 }
 
 global $oreRequired;
-$targetFuel = 5613122;
+$targetFuel = 1;
 $time_pre = microtime(true);
 $empty = 1;
 while($minerals['FUEL'] < $targetFuel) {
