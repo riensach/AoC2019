@@ -39,9 +39,10 @@ while($x < 100) {
 $gridPositionX = 50;
 $gridPositionY = 50;
 $facing = 'N';
-
 $orientation = new \Ds\Deque(['N', 'E', 'S', 'W']);
 $processor1 = new processCode(0, $arrayInfo, 2);
+echo "hlleo";
+die();
 while($processor1->halted == 0) {
     $processor1->processCodeFunction();
     $outputValue1 = $processor1->output;

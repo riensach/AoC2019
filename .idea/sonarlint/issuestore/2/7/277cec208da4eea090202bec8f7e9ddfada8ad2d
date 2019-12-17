@@ -1,0 +1,13 @@
+
+hphp:S101("ORename class "processCode" to match the regular expression ^[A-Z][a-zA-Z0-9]*$.(Ã¿¯Áúÿÿÿÿ
+i	php:S3776~"TRefactor this function to reduce its Cognitive Complexity from 28 to the 15 allowed.(ÌºÊµ
+8php:S125"Remove this commented out code.(ö×•³ùÿÿÿÿ
+8php:S125"Remove this commented out code.(òÈšƒşÿÿÿÿ
+8php:S125"Remove this commented out code.(¼ÉÃïùÿÿÿÿ
+8php:S125"Remove this commented out code.(–›ºöûÿÿÿÿ
+8php:S125#"Remove this commented out code.(½Ì¶Ùÿÿÿÿÿ
+2php:S125>"Remove this commented out code.(åÔÖP
+4php:S125Ş"Remove this commented out code.(ƒèšÖ
+K	php:S1481T"1Remove this unused "$arrayLength" local variable.(ƒµ‘¨øÿÿÿÿ
+K	php:S1481F"1Remove this unused "$arrayLength" local variable.(ƒµ‘¨øÿÿÿÿ
+`	php:S1117£"JRename "$output" which has the same name as the field declared at line 42.(ìöëÂ

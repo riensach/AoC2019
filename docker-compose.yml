@@ -8,7 +8,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /home/rienjsach/AoC2019:/www/
+      - /WFS/AoC2019:/www/
   devmysql:
     build:
       context: ./
@@ -20,4 +20,4 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD : 'yes'
     restart: always
     volumes:
-            - /home/rienjsach/AoC2019:/database/
+            - /WFS/AoC2019:/database/

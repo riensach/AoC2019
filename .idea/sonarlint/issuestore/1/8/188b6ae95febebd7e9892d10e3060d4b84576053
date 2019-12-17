@@ -1,0 +1,13 @@
+
+8php:S125X"Remove this commented out code.(½Ì¶Ùÿÿÿÿÿ
+j	php:S3776³"TRefactor this function to reduce its Cognitive Complexity from 28 to the 15 allowed.(ÌºÊµ
+O	php:S1481P".Remove this unused "$columnID" local variable.(öƒÎ²ıÿÿÿÿ8ÅïĞ˜ñ-
+L	php:S1481O"+Remove this unused "$rowID" local variable.(Ÿ‰ãùÿÿÿÿ8ÅïĞ˜ñ-
+4php:S125“"Remove this commented out code.(ƒèšÖ
+2php:S125s"Remove this commented out code.(åÔÖP
+L	php:S1481‰"1Remove this unused "$arrayLength" local variable.(ƒµ‘¨øÿÿÿÿ
+Pphp:S121Q"0Add curly braces around the nested statement(s).(­±Âåşÿÿÿÿ8ÅïĞ˜ñ-
+`	php:S1117Ø"JRename "$output" which has the same name as the field declared at line 95.(ìöëÂ
+8php:S125"Remove this commented out code.(¼ÉÃïùÿÿÿÿ
+K	php:S1481{"1Remove this unused "$arrayLength" local variable.(ƒµ‘¨øÿÿÿÿ
+hphp:S101]"ORename class "processCode" to match the regular expression ^[A-Z][a-zA-Z0-9]*$.(Ã¿¯Áúÿÿÿÿ
