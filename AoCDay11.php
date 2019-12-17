@@ -14,19 +14,16 @@ $inputData = ("3,8,1005,8,335,1106,0,11,0,0,0,104,1,104,0,3,8,1002,8,-1,10,1001,
 //$inputData = ("1102,34915192,34915192,7,4,7,99,0");
 //$inputData = ("104,1125899906842624,99");
 $arrayInfo = explode(",",$inputData);
-
-
 $arrayLength = count($arrayInfo);
-
         
 $array = implode(",", $arrayInfo);
 
 $x = 0;
 $y = 0;
 $gridArray = array();
-while($x < 50) {
+while($x < 250) {
     $gridArray[$x] = array();
-    while($y < 50) {
+    while($y < 250) {
         $gridArray[$x][$y] = '.';
         $y++;
     }
@@ -34,11 +31,9 @@ while($x < 50) {
     $x++;
 }
 
-
-//117 is too low
-$gridPositionX = 25;
-$gridPositionY = 25;
-$facing = 'N';
+//1248 is too low
+$gridPositionX = 50;
+$gridPositionY = 50;
 $orientation = new \Ds\Deque(['N', 'E', 'S', 'W']);
 $processor1 = new processCode(0, $arrayInfo, 2);
 $paintedPanels = array();
@@ -141,7 +136,10 @@ function printGrid($trackGridInputArray) {
             $value = $this->processorMemory[$positionValue];
         } else {
             $positionValue = $this->processorMemory[$this->processorPosition+$offset];
-            $value = $this->processorMemory[$positionValue];            
+            if(!isset($this->processorMemory[$positionValue])) {
+                $this->processorMemory[$positionValue] = 0;                
+            } 
+            $value = $this->processorMemory[$positionValue];
         }
         return $value;
     }
@@ -190,8 +188,8 @@ function printGrid($trackGridInputArray) {
     }
     
     public function processCodeFunction() {
-        $this->inputValue = 1;
-        $this->updateInputReference();
+        //$this->inputValue = 2;
+        //$this->updateInputReference();
         $exit = 0;
 
         if($this->halted == 1) {
