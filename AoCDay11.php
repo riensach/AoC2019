@@ -21,9 +21,9 @@ $array = implode(",", $arrayInfo);
 $x = 0;
 $y = 0;
 $gridArray = array();
-while($x < 100) {
+while($x < 150) {
     $gridArray[$x] = array();
-    while($y < 100) {
+    while($y < 150) {
         $gridArray[$x][$y] = '.';
         $y++;
     }
@@ -32,8 +32,8 @@ while($x < 100) {
 }
 
 //1248 is too low
-$gridPositionX = 50;
-$gridPositionY = 50;
+$gridPositionX = 100;
+$gridPositionY = 100;
 $orientation = new \Ds\Deque(['N', 'E', 'S', 'W']);
 $processor1 = new processCode(0, $arrayInfo, 2);
 $paintedPanels = array();
@@ -189,7 +189,7 @@ function printGrid($trackGridInputArray) {
     }
     
     public function processCodeFunction() {
-        //$this->inputValue = 2;
+        $this->inputValue = $this->inputCode;
         //$this->updateInputReference();
         $exit = 0;
 
