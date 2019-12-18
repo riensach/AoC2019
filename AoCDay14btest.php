@@ -103,7 +103,7 @@ foreach($inputArray as $key => $value) {
 
 global $oreRequired, $mineralsUsed;
 $mineralsUsed = $minerals;
-$targetFuel = 10000;
+$targetFuel = 100;
 // 178154  = 1
 // 8046537  = 50
 // 80313893 = 500
@@ -146,16 +146,20 @@ function getRequiredMinerals($minerals,$desiredMineral,$desiredMineralQuantity) 
                         $quantityNeeded = $value2['inputQuantity'] - $minerals[$value2['inputMineral']];
                         $minerals = getRequiredMinerals($minerals,$value2['inputMineral'],$quantityNeeded);   
                         //echo "Get me $quantityNeeded more ".$value2['inputMineral']." for reacion $key<br>";
-                    }                
+                    }
+                    //$minerals[$value2['inputMineral']] -= $value2['inputQuantity'];
                 }
                 foreach($value['inputs'] as $key2 => $value2) {
                     while($value2['inputQuantity'] > $minerals[$value2['inputMineral']]) {
                         $quantityNeeded = $value2['inputQuantity'] - $minerals[$value2['inputMineral']];
                         $minerals = getRequiredMinerals($minerals,$value2['inputMineral'],$quantityNeeded);   
                         //echo "Get me $quantityNeeded more ".$value2['inputMineral']." for reacion $key<br>";
-                    }                
+                    }
+                    $minerals[$value2['inputMineral']] -= $value2['inputQuantity'];
                 }
-                $minerals = processMineralReaction($minerals,$mineralReactions[$key]);  
+                //$minerals = processMineralReaction($minerals,$mineralReactions[$key]);
+                $minerals[$value['outputs'][0]['outputMineral']] += $value['outputs'][0]['outputQuantity'];
+                $mineralsUsed[$value['outputs'][0]['outputMineral']] += $value['outputs'][0]['outputQuantity'];
                 return $minerals; 
             }
         } 

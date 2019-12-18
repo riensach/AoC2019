@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="43021acf-5f87-4f21-9285-d09b20ae1e46" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/1/8/188b6ae95febebd7e9892d10e3060d4b84576053" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/1/8/188b6ae95febebd7e9892d10e3060d4b84576053" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/2/7/277cec208da4eea090202bec8f7e9ddfada8ad2d" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/2/7/277cec208da4eea090202bec8f7e9ddfada8ad2d" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AoCDay11.php" beforeDir="false" afterPath="$PROJECT_DIR$/AoCDay11.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DevBox.DockerFile" beforeDir="false" afterPath="$PROJECT_DIR$/DevBox.DockerFile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AoCDay14btest.php" beforeDir="false" afterPath="$PROJECT_DIR$/AoCDay14btest.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -62,7 +62,8 @@
       <option name="presentableId" value="Default" />
       <updated>1576572075029</updated>
       <workItem from="1576572076255" duration="1917000" />
-      <workItem from="1576589666263" duration="3147000" />
+      <workItem from="1576589666263" duration="4358000" />
+      <workItem from="1576673510998" duration="1229000" />
     </task>
     <servers />
   </component>
@@ -81,5 +82,16 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/AoCDay14btest.php</url>
+          <line>157</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
