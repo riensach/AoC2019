@@ -1,5 +1,5 @@
 <?php
-
+set_time_limit(-1);
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -105,25 +105,22 @@ foreach($inputArray as $key => $value) {
 }
 
 global $oreRequired;
-$targetFuel = 10;
+$targetFuel = 100000;
 $time_pre = microtime(true);
-$empty = 1;
-while($minerals['FUEL'] < $targetFuel) {
+$targetOre = 1000000000000;
+//$targetOre = 10000000;
+while($oreRequired < $targetOre) {
     $minerals = getRequiredMinerals($minerals,$mineralReactions,'FUEL',1);
-    $empty = 0;
-    foreach($minerals as $key => $value) {
-        if($value > 0) {
-            $empty = 1;
-        }
-    }
-    if($empty == 0) {
-        echo "hi";
-        break;
+    $time_post = microtime(true);
+    $exec_time = $time_post - $time_pre;
+    if($exec_time % 50 == 0) {
+        echo "Spent $exec_time seconds so far<br>";
     }
 }
 $time_post = microtime(true);
 $exec_time = $time_post - $time_pre;
-echo "Total ORE required: $oreRequired found in $exec_time seconds";
+$fuel = $minerals['FUEL'];
+echo "Total ORE required: $oreRequired found in $exec_time seconds which delivered $fuel fuel";
 var_dump($minerals);
 
 function getRequiredMinerals($minerals,$reactions,$desiredMineral,$desiredMineralQuantity) {
@@ -136,37 +133,26 @@ function getRequiredMinerals($minerals,$reactions,$desiredMineral,$desiredMinera
 
         foreach($reactions as $key => $value) {
             if($value['outputs'][0]['outputMineral'] == $desiredMineral) {
+                
                 foreach($value['inputs'] as $key2 => $value2) {
                     while($value2['inputQuantity'] > $minerals[$value2['inputMineral']]) {
                         $quantityNeeded = $value2['inputQuantity'] - $minerals[$value2['inputMineral']];
-                        $minerals = getRequiredMinerals($minerals,$reactions,$value2['inputMineral'],$quantityNeeded);   
-                        //echo "Get me $quantityNeeded more ".$value2['inputMineral']." for reacion $key<br>";
+                        $minerals = getRequiredMinerals($minerals,$reactions,$value2['inputMineral'],$quantityNeeded);  
                     }                
                 }
                 foreach($value['inputs'] as $key2 => $value2) {
+                    
                     while($value2['inputQuantity'] > $minerals[$value2['inputMineral']]) {
                         $quantityNeeded = $value2['inputQuantity'] - $minerals[$value2['inputMineral']];
                         $minerals = getRequiredMinerals($minerals,$reactions,$value2['inputMineral'],$quantityNeeded);   
-                        //echo "Get me $quantityNeeded more ".$value2['inputMineral']." for reacion $key<br>";
-                    }                
-                }
-                $minerals = processMineralReaction($minerals,$reactions[$key]);  
+                    }  
+                    
+                $minerals[$value2['inputMineral']] -= $value2['inputQuantity'];
+                }        
+                $minerals[$value['outputs'][0]['outputMineral']] += $value['outputs'][0]['outputQuantity']; 
+                //$minerals = processMineralReaction($minerals,$reactions[$key]);  
                 return $minerals; 
             }
         } 
-
        
-}
-
-
-function processMineralReaction($mineralsPresent,$reaction) {  
-    foreach($reaction['inputs'] as $key2 => $inputs) {
-        if($mineralsPresent[$inputs['inputMineral']] >= $inputs['inputQuantity']) {
-            $mineralsPresent[$inputs['inputMineral']] -= $inputs['inputQuantity'];
-        }
-    }
-    foreach($reaction['outputs'] as $key => $outputs) {        
-          $mineralsPresent[$outputs['outputMineral']] += $outputs['outputQuantity'];        
-    }  
-    return $mineralsPresent; 
 }

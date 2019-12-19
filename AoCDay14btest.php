@@ -103,7 +103,7 @@ foreach($inputArray as $key => $value) {
 
 global $oreRequired, $mineralsUsed;
 $mineralsUsed = $minerals;
-$targetFuel = 100;
+$targetFuel = 10;
 // 178154  = 1
 // 8046537  = 50
 // 80313893 = 500
@@ -113,7 +113,7 @@ $targetFuel = 100;
 
 // 6226099 is wrong
 // 6226107 ???
-// 6226104 ???
+// 6226184.287 is wrong ???
 // 6226262 is wrong
 // Target ORE :: 1,000,000,000,000
 $time_pre = microtime(true);
@@ -132,7 +132,7 @@ var_dump($minerals);
 //5613123 == too low
 
 function getRequiredMinerals($minerals,$desiredMineral,$desiredMineralQuantity) {
-    global $oreRequired, $mineralReactions;
+    global $oreRequired, $mineralReactions, $mineralsUsed;
     if($desiredMineral=='ORE') {
         $minerals['ORE'] += $desiredMineralQuantity;
         $oreRequired += $desiredMineralQuantity;
@@ -142,14 +142,24 @@ function getRequiredMinerals($minerals,$desiredMineral,$desiredMineralQuantity) 
         foreach($mineralReactions as $key => $value) {
             if($value['outputs'][0]['outputMineral'] == $desiredMineral) {
                 foreach($value['inputs'] as $key2 => $value2) {
+                   // if($value2['inputQuantity'] > $minerals[$value2['inputMineral']]) {
+                    //    $quantityNeeded = $value2['inputQuantity'] - $minerals[$value2['inputMineral']];
+                    //    $minerals = getRequiredMinerals($minerals,$value2['inputMineral'],$quantityNeeded);
+                        
+                   // }
                     while($value2['inputQuantity'] > $minerals[$value2['inputMineral']]) {
-                        $quantityNeeded = $value2['inputQuantity'] - $minerals[$value2['inputMineral']];
-                        $minerals = getRequiredMinerals($minerals,$value2['inputMineral'],$quantityNeeded);   
+                        $quantityNeeded = $value2['inputQuantity'] - $minerals[$value2['inputMineral']]; 
+                        $minerals = getRequiredMinerals($minerals,$value2['inputMineral'],$quantityNeeded);  
                         //echo "Get me $quantityNeeded more ".$value2['inputMineral']." for reacion $key<br>";
                     }
                     //$minerals[$value2['inputMineral']] -= $value2['inputQuantity'];
                 }
                 foreach($value['inputs'] as $key2 => $value2) {
+                   // if($value2['inputQuantity'] > $minerals[$value2['inputMineral']]) {
+                   //     $quantityNeeded = $value2['inputQuantity'] - $minerals[$value2['inputMineral']];
+                    //    $minerals = getRequiredMinerals($minerals,$value2['inputMineral'],$quantityNeeded);
+                        
+                   // }
                     while($value2['inputQuantity'] > $minerals[$value2['inputMineral']]) {
                         $quantityNeeded = $value2['inputQuantity'] - $minerals[$value2['inputMineral']];
                         $minerals = getRequiredMinerals($minerals,$value2['inputMineral'],$quantityNeeded);   
