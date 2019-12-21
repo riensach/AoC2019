@@ -104,27 +104,59 @@ foreach($inputArray as $key => $value) {
     
 }
 
-global $oreRequired;
-$targetFuel = 100000;
+global $oreRequired, $oreUsed, $executionMultiplier;
+$targetFuel = 62280000;
 $time_pre = microtime(true);
 $targetOre = 1000000000000;
-//$targetOre = 10000000;
-while($oreRequired < $targetOre) {
+$targetOre = 1000000000000;
+//298585070000 
+//1000000000000
+$oreUsed = 0;
+$executionMultiplier = 10000;
+$minerals['ORE'] = 1000000000000;
+while($minerals['FUEL'] < $targetFuel) {
+    $remainingOre = $targetOre - $oreUsed;
+    
+    if($remainingOre < 10000000000) { 
+        $executionMultiplier = 100;
+    }
+    if($remainingOre < 5000000000) { 
+        $executionMultiplier = 50;
+    }
+    if($remainingOre < 100000000) { 
+        $executionMultiplier = 10;
+    }
+    if($remainingOre < 10000000) { 
+        $executionMultiplier = 1;
+    }
     $minerals = getRequiredMinerals($minerals,$mineralReactions,'FUEL',1);
+    //die("done2");
     $time_post = microtime(true);
     $exec_time = $time_post - $time_pre;
-    if($exec_time % 50 == 0) {
-        echo "Spent $exec_time seconds so far<br>";
+    $fuel = $minerals['FUEL'];
+    if($minerals['FUEL'] % $executionMultiplier == 0) {
+        echo "Spent $exec_time seconds so far - used $oreUsed ore and produced $fuel fuel :: $executionMultiplier :: $remainingOre<br>";
+    }
+    
+
+    
+
+    if($oreUsed >= $targetOre) {
+        break;
     }
 }
+
 $time_post = microtime(true);
 $exec_time = $time_post - $time_pre;
 $fuel = $minerals['FUEL'];
-echo "Total ORE required: $oreRequired found in $exec_time seconds which delivered $fuel fuel";
+echo "Total ORE required: $oreRequired - $oreUsed found in $exec_time seconds which delivered $fuel fuel";
 var_dump($minerals);
 
+
+
+
 function getRequiredMinerals($minerals,$reactions,$desiredMineral,$desiredMineralQuantity) {
-    global $oreRequired;
+    global $oreRequired, $oreUsed, $executionMultiplier;
     if($desiredMineral=='ORE') {
         $minerals['ORE'] += $desiredMineralQuantity;
         $oreRequired += $desiredMineralQuantity;
@@ -136,20 +168,23 @@ function getRequiredMinerals($minerals,$reactions,$desiredMineral,$desiredMinera
                 
                 foreach($value['inputs'] as $key2 => $value2) {
                     while($value2['inputQuantity'] > $minerals[$value2['inputMineral']]) {
-                        $quantityNeeded = $value2['inputQuantity'] - $minerals[$value2['inputMineral']];
+                        $quantityNeeded = ($value2['inputQuantity'] - $minerals[$value2['inputMineral']])*$executionMultiplier;
                         $minerals = getRequiredMinerals($minerals,$reactions,$value2['inputMineral'],$quantityNeeded);  
                     }                
                 }
                 foreach($value['inputs'] as $key2 => $value2) {
                     
                     while($value2['inputQuantity'] > $minerals[$value2['inputMineral']]) {
-                        $quantityNeeded = $value2['inputQuantity'] - $minerals[$value2['inputMineral']];
+                        $quantityNeeded = ($value2['inputQuantity'] - $minerals[$value2['inputMineral']])*$executionMultiplier;
                         $minerals = getRequiredMinerals($minerals,$reactions,$value2['inputMineral'],$quantityNeeded);   
                     }  
                     
-                $minerals[$value2['inputMineral']] -= $value2['inputQuantity'];
+                $minerals[$value2['inputMineral']] -= ($value2['inputQuantity']*$executionMultiplier);
+                if($value2['inputMineral']=='ORE') {
+                    $oreUsed += ($value2['inputQuantity']*$executionMultiplier);
+                }
                 }        
-                $minerals[$value['outputs'][0]['outputMineral']] += $value['outputs'][0]['outputQuantity']; 
+                $minerals[$value['outputs'][0]['outputMineral']] += ($value['outputs'][0]['outputQuantity']*$executionMultiplier); 
                 //$minerals = processMineralReaction($minerals,$reactions[$key]);  
                 return $minerals; 
             }

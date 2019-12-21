@@ -113,6 +113,10 @@ $targetFuel = 10;
 
 // 6226099 is wrong
 // 6226107 ???
+// 6227148 is wrong
+// 6227149 is wrong
+// 6226084 is wrong
+// 6226152
 // 6226184.287 is wrong ???
 // 6226262 is wrong
 // Target ORE :: 1,000,000,000,000
