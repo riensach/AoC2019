@@ -14,33 +14,38 @@ $arrayLength = count($arrayInfo);
 
 $grid = array();
 
-$processor1 = new processCode(0, $arrayInfo, 2);
+//$processor1 = new processCode(0, $arrayInfo, 2);
 
 $iterations = 0;
-while($processor1->halted == 0) {
-    
+//while($processor1->halted == 0) {
+    $totalPulls = 0;
     $x = $y = 0;
     while($x < 50) {
         while($y < 50) {
-            $processor1 = new processCode(0, $arrayInfo, 2);
-            $processor1->updateInput($x);  
-            $processor1->processCodeFunction();
-            $processor1->updateInput($y);  
+            $processor1 = new processCode(1, $arrayInfo, 2);
+            $processor1->updateInputs($x,$y);  
             $processor1->processCodeFunction();
             $statusUpdate = $processor1->output;
-            $grid[$x][$y] = $statusUpdate;
+            if($statusUpdate==1) {
+                $value = '#';
+                $totalPulls++;
+            } else {
+                $value = '-';                
+            }
+            unset($processor1); 
+            $grid[$x][$y] = $value;
             $y++;
         }
         $y = 0;
         $x++;
     }
     
-
+echo $totalPulls."<br>";
 
     
-    if($iterations > 50000000) break;
-    $iterations++;
-}
+    //if($iterations > 50000000) break;
+    //$iterations++;
+//}
 printGrid($grid);
 
 
@@ -66,6 +71,7 @@ function printGrid($trackGridInputArray) {
 
     public $output;
     public $inputCode;
+    public $inputCodeSecond;
     public $phaseCode;
     public $processorMemory;
     public $processorPosition;
@@ -80,8 +86,8 @@ function printGrid($trackGridInputArray) {
     public $operation;
     
     function __construct($phaseCode, $processorMemory, $processorID) {
-        $this->phaseCode = $phaseCode;
-        $this->inputCode = $phaseCode;
+        //$this->phaseCode = $phaseCode;
+        //$this->inputCode = $phaseCode;
         $this->processorMemory = $processorMemory;
         $this->processorPosition = 0;
         $this->processorID = $processorID;
@@ -90,6 +96,11 @@ function printGrid($trackGridInputArray) {
     
     function updateInput($inputCode) {
         $this->inputCode = $inputCode;
+    }
+    
+    function updateInputs($inputCode,$secondInputCode) {
+        $this->inputCode = $inputCode;
+        $this->inputCodeSecond = $secondInputCode;
     }
     
     function getReference($positionMode,$offset) {        
@@ -126,11 +137,9 @@ function printGrid($trackGridInputArray) {
     
     function updateInputReference() {
         if($this->inputValueRequest > 0) {
-            $this->inputValue = $this->inputCode;
+            $this->inputValue = $this->inputCodeSecond;
         } 
-        if($this->inputValueRequest == 1 && $this->processorID == 1) {
-            $this->inputValue = 0;
-        } 
+
     }
     
     function processOperation() {        
@@ -157,6 +166,7 @@ function printGrid($trackGridInputArray) {
     
     public function processCodeFunction() {
         $this->inputValue = $this->inputCode;
+        
         //$this->updateInputReference();
         $exit = 0;
 
