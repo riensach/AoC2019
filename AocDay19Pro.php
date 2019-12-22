@@ -2642,7 +2642,7 @@ $y = $startY;
 while($x <= $endX) {
     while($y <= $endY) {
         if($grid[$x][$y]=='#') {
-            $grid[$x][$y] = 'X';
+            //$grid[$x][$y] = 'X';
         }
         $y++;
     }
@@ -2651,7 +2651,10 @@ while($x <= $endX) {
     $x++;
 }
 
-//printGrid($grid);
+//# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+
+printGrid($grid);
 
 function printGrid($trackGridInputArray) {
     echo '<code>';
