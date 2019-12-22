@@ -15,8 +15,8 @@ $arrayLength = count($arrayInfo);
 $grid = array();
 
 $processor1 = new processCode(0, $arrayInfo, 2);
-$currentX = $startingX = 50;
-$currentY = $startingY = 50;
+$currentX = $startingX = 25;
+$currentY = $startingY = 25;
 $inputInstruction = 1;
 $iterations = 0;
 $finalX = $finalY = 0;
@@ -24,61 +24,84 @@ $finalX = $finalY = 0;
 
 $x = 0;
 $y = 0;
-while($x <= 150) {
-    while($y <= 100) {
-            $grid[$x][$y] = '+';        
+while($x <= 50) {
+    while($y <= 50) {
+            $grid[$x][$y] = '+';
         $y++;
-    }    
+    }
     $y = 0;
     $x++;
 }
+
+$gridOfLocations = array();
 
 while($processor1->halted == 0) {
     
     // North = 1, south = 2, west = 3, east = 4
     // 0 - hit wall, 1 - moved in direction, 2 moved in a direction, found the oxygen system
-    $processor1->updateInput($inputInstruction);  
+    $processor1->updateInput($inputInstruction);
     $processor1->processCodeFunction();
     $statusUpdate = $processor1->output;
     $modifiedX = 0;
     if($inputInstruction==1) {
         $modifiedX = -1;
-    } elseif($inputInstruction==2) {            
+    } elseif($inputInstruction==2) {
         $modifiedX = 1;
     }
     $modifiedY = 0;
     if($inputInstruction==3) {
         $modifiedY = -1;
-    } elseif($inputInstruction==4) {            
+    } elseif($inputInstruction==4) {
         $modifiedY = 1;
     }
-    if($statusUpdate==0) {        
+    if($statusUpdate==0) {
         $currentXBlocked = $currentX + $modifiedX;
         $currentYBlocked = $currentY + $modifiedY;
         //echo "Blocked: $currentXBlocked,$currentYBlocked :: $currentX + $modifiedX :::: $currentY + $modifiedY<br>";
         $grid[$currentXBlocked][$currentYBlocked] = "#";
+        $gridOfLocations[$currentXBlocked.",".$currentYBlocked] = "#";
         $inputInstruction = rand(1,4);
         //$inputInstruction++;
-       // if($inputInstruction>4) { 
+       // if($inputInstruction>4) {
            // $inputInstruction = 1;
        // }
-    } elseif($statusUpdate==1) {        
+        // if($inputInstruction==1) {
+        //     $modifiedX = -1;
+        // } elseif($inputInstruction==2) {
+        //     $modifiedX = 1;
+        // } elseif($inputInstruction==3) {
+        //     $modifiedY = -1;
+        // } elseif($inputInstruction==4) {
+        //     $modifiedY = 1;
+        // }
+    } elseif($statusUpdate==1) {
         $currentX = $currentX + $modifiedX;
         $currentY = $currentY + $modifiedY;
         //echo "Moved into: $currentX,$currentY :: $currentX + $modifiedX :::: $currentY + $modifiedY<br>";
-        $grid[$currentX][$currentY] = '.'; 
+        $grid[$currentX][$currentY] = '.';
+        $gridOfLocations[$currentX][$currentY] = '.';
+        
+        $inputInstruction = rand(1,4);
 
     } elseif($statusUpdate==2) {
+      
+        $currentX = $currentX + $modifiedX;
+        $currentY = $currentY + $modifiedY;
         $finalX = $currentX + $modifiedX;
         $finalY = $currentY + $modifiedY;
-        echo "FOUND OXYGEN";
-        break;
+        $grid[$finalX][$finalY] = 'O';
+        
+        $inputInstruction = rand(1,4);
+        //echo "FOUND OXYGEN<br><br>";
+        //break;
     }
     //echo "$currentX,$currentY :: $statusUpdate<br>";
     
     if($iterations > 500000) break;
     $iterations++;
 }
+
+        $grid[$startingX][$startingY] = 'X';
 printGrid($grid);
 
 $minimalMoves = ($startingX-$finalX) + ($startingY-$finalY);
@@ -102,7 +125,7 @@ function printGrid($trackGridInputArray) {
 }
 
         
- class processCode {  
+ class processCode {
 
     public $output;
     public $inputCode;
@@ -132,7 +155,7 @@ function printGrid($trackGridInputArray) {
         $this->inputCode = $inputCode;
     }
     
-    function getReference($positionMode,$offset) {        
+    function getReference($positionMode,$offset) {
         $arrayLength = count($this->processorMemory);
         if($positionMode==1) {
             $value = $this->processorMemory[$this->processorPosition+$offset];
@@ -142,35 +165,35 @@ function printGrid($trackGridInputArray) {
         } else {
             $positionValue = $this->processorMemory[$this->processorPosition+$offset];
             if(!isset($this->processorMemory[$positionValue])) {
-                $this->processorMemory[$positionValue] = 0;                
-            } 
+                $this->processorMemory[$positionValue] = 0;
+            }
             $value = $this->processorMemory[$positionValue];
         }
         return $value;
     }
     
-    function getSaveReference($positionMode,$offset) {        
+    function getSaveReference($positionMode,$offset) {
         $arrayLength = count($this->processorMemory);
         if($positionMode==1) {
             $positionValue = $this->processorMemory[$this->processorPosition+$offset];
         } elseif($positionMode==2) {
             $positionValue = $this->relativeBase + $this->processorMemory[$this->processorPosition+$offset];
         } else {
-            $positionValue = $this->processorMemory[$this->processorPosition+$offset];      
+            $positionValue = $this->processorMemory[$this->processorPosition+$offset];
         }
-        return $positionValue;    
+        return $positionValue;
     }
     
     function updateInputReference() {
         if($this->inputValueRequest > 0) {
             $this->inputValue = $this->inputCode;
-        } 
+        }
         if($this->inputValueRequest == 1 && $this->processorID == 1) {
             $this->inputValue = 0;
-        } 
+        }
     }
     
-    function processOperation() {        
+    function processOperation() {
         unset($this->positionMode1,$this->positionMode2,$this->positionMode3);
         
         if(strlen($this->operation)>1) {
@@ -185,7 +208,7 @@ function printGrid($trackGridInputArray) {
             if(strlen($this->operation)>4) {
                 $this->positionMode3 = substr($this->operation,-5,1);
             }
-            $this->operation = substr($this->operation,-2);        
+            $this->operation = substr($this->operation,-2);
         }
         if(!isset($this->positionMode1)) { $this->positionMode1 = 0; }
         if(!isset($this->positionMode2)){ $this->positionMode2 = 0; }
@@ -206,7 +229,7 @@ function printGrid($trackGridInputArray) {
 
             if($this->operation == 1) {
                 // Add 1 + 2 and store in 3
-                $value1 = $this->getReference($this->positionMode1,1);                
+                $value1 = $this->getReference($this->positionMode1,1);
                 $value2 = $this->getReference($this->positionMode2,2);
                 $result = $value1 + $value2;
                 $value3 = $this->getSaveReference($this->positionMode3,3);
@@ -214,7 +237,7 @@ function printGrid($trackGridInputArray) {
                 $this->processorPosition = $this->processorPosition + 4;
             } elseif($this->operation == 2) {
                 // Multiply 1 + 2 and store in 3
-                $value1 = $this->getReference($this->positionMode1,1);                
+                $value1 = $this->getReference($this->positionMode1,1);
                 $value2 = $this->getReference($this->positionMode2,2);
                 $result = $value1 * $value2;
                 $value3 = $this->getSaveReference($this->positionMode3,3);
@@ -228,33 +251,33 @@ function printGrid($trackGridInputArray) {
                 $this->inputValueRequest = $this->inputValueRequest + 1;
                 $this->updateInputReference();
             } elseif($this->operation == 4) {
-                $value1 = $this->getReference($this->positionMode1,1); 
-                $output = $value1;              
+                $value1 = $this->getReference($this->positionMode1,1);
+                $output = $value1;
                 $this->output = $output;
                 $this->processorPosition = $this->processorPosition + 2;
                 $exit = 1;
                 return;
             } elseif($this->operation == 5) {
-                // Jump if true        
-                $value1 = $this->getReference($this->positionMode1,1);                
+                // Jump if true
+                $value1 = $this->getReference($this->positionMode1,1);
                 $value2 = $this->getReference($this->positionMode2,2);
-                if($value1<>0) {                    
-                    $this->processorPosition = $value2; 
+                if($value1<>0) {
+                    $this->processorPosition = $value2;
                 } else {
                     $this->processorPosition = $this->processorPosition + 3;
                 }
             } elseif($this->operation == 6) {
                 // Jump if false
-                $value1 = $this->getReference($this->positionMode1,1);                
-                $value2 = $this->getReference($this->positionMode2,2);                
-                if($value1==0) {                    
-                    $this->processorPosition = $value2; 
+                $value1 = $this->getReference($this->positionMode1,1);
+                $value2 = $this->getReference($this->positionMode2,2);
+                if($value1==0) {
+                    $this->processorPosition = $value2;
                 } else {
                     $this->processorPosition = $this->processorPosition + 3;
                 }
             } elseif($this->operation == 7) {
                 // Store 1 if less than
-                $value1 = $this->getReference($this->positionMode1,1);                
+                $value1 = $this->getReference($this->positionMode1,1);
                 $value2 = $this->getReference($this->positionMode2,2);
 
                 $storedValue = 0;
@@ -268,7 +291,7 @@ function printGrid($trackGridInputArray) {
 
             } elseif($this->operation == 8) {
                 // Store 1 if equal
-                $value1 = $this->getReference($this->positionMode1,1);                
+                $value1 = $this->getReference($this->positionMode1,1);
                 $value2 = $this->getReference($this->positionMode2,2);
 
                 $storedValue = 0;
@@ -280,8 +303,8 @@ function printGrid($trackGridInputArray) {
                 $this->processorPosition = $this->processorPosition + 4;
 
             } elseif($this->operation == 9) {
-                // Adjust the relative base                
-                $value1 = $this->getReference($this->positionMode1,1); 
+                // Adjust the relative base
+                $value1 = $this->getReference($this->positionMode1,1);
                 $this->relativeBase = $this->relativeBase + $value1;
                 $this->processorPosition = $this->processorPosition + 2;
             } elseif($this->operation == 99) {
@@ -292,7 +315,7 @@ function printGrid($trackGridInputArray) {
                 //echo "catch all <br>";
             }
 
-        } 
+        }
 
     }
     
