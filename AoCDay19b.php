@@ -17,43 +17,52 @@ $grid = array();
 //$processor1 = new processCode(0, $arrayInfo, 2);
 $time_pre = microtime(true);
 $iterations = 0;
-//while($processor1->halted == 0) {
-    $totalPulls = 0;
-    $x = $y = 0;
-    while($x < 1250) {
-        while($y < 1250) {
-            $processor1 = new processCode(1, $arrayInfo, 2);
-            $processor1->updateInputs($x,$y);  
-            $processor1->processCodeFunction();
-            $statusUpdate = $processor1->output;
-            if($statusUpdate==1) {
-                $value = '#';
-                $totalPulls++;
+// too low - 1251280
+// too high - 12501280
+// too high - 12001330
+// wrong - 4000479
+// wrong - 7990957
+// wrong - 9570799
+$x = 100;
+$y = 400;
+$found = 0;
+    while($found < 1) {
+        $processor1 = new processCode(1, $arrayInfo, 2);
+        $processor1->updateInputs($x,$y);  
+        $processor1->processCodeFunction();
+        $statusUpdate = $processor1->output;
+        if($statusUpdate==1) {   
+            $processor2 = new processCode(1, $arrayInfo, 3);
+            $processor2->updateInputs($x+99,$y-99);   
+            $processor2->processCodeFunction();          
+            $statusUpdate2 = $processor2->output;
+            if($statusUpdate2==1) {                  
+                $processor3 = new processCode(1, $arrayInfo, 4);
+                $processor3->updateInputs($x,$y-99);   
+                $processor3->processCodeFunction();          
+                $statusUpdate3 = $processor3->output;
+                //Found square
+                $foundX = $x+99;
+                $foundY = $y-99;
+                $answer = ($x * 10000) + $foundY;
+                echo "$x,$y :: $statusUpdate :: $statusUpdate2 :: :: $statusUpdate3 :: execution time: $exec_time<br>";
+                echo "Found square with top-right at $foundX,$foundY - top left of $x,$foundY - answer is $answer<br>";
+                $found = 1;
             } else {
-                $value = '-';                
+               $y++; 
             }
-            unset($processor1); 
-            $grid[$x][$y] = $value;
-            $y++;
+        } else { 
+            $x++;  
         }
-        $y = 0;
-        $x++;
+        $time_post = microtime(true);
+        $exec_time = $time_post - $time_pre;   
+        echo "$x,$y :: $statusUpdate :: $statusUpdate2 :: execution time: $exec_time<br>";
+        unset($processor1,$processor2); 
     }
- $time_post = microtime(true);
-    $exec_time = $time_post - $time_pre;   
-echo $totalPulls." - execution time: $exec_time<br>";
 
-    
-    //if($iterations > 50000000) break;
-    //$iterations++;
-//}
-printGrid($grid);
-
-
-
-//echo "<br><br>Total number of block walls: $blockWalls - current score is $currentScore";
-
-// 19210 done
+$time_post = microtime(true);
+$exec_time = $time_post - $time_pre;   
+echo "execution time: $exec_time<br>";
 
 function printGrid($trackGridInputArray) {
     echo '<code>';
