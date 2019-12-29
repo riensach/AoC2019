@@ -1,0 +1,40 @@
+<?php
+
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+$input = ("59796737047664322543488505082147966997246465580805791578417462788780740484409625674676660947541571448910007002821454068945653911486140823168233915285229075374000888029977800341663586046622003620770361738270014246730936046471831804308263177331723460787712423587453725840042234550299991238029307205348958992794024402253747340630378944672300874691478631846617861255015770298699407254311889484508545861264449878984624330324228278057377313029802505376260196904213746281830214352337622013473019245081834854781277565706545720492282616488950731291974328672252657631353765496979142830459889682475397686651923318015627694176893643969864689257620026916615305397");
+
+//$input = ("03036732577212944063491565474664");
+
+$len = strlen($input);
+
+$vector = array();
+$maxPhases = 100;
+
+$offset = 0;
+for ($i = 0; $i < 7; ++$i) {
+    $offset = $offset * 10 + $input[$i];
+}
+echo "Offset calculated :: $offset<br>";
+
+$size = 10000 * $len - $offset;
+echo "Size :: $size<br>";
+
+for ($i = 0; $i < $size; ++$i) {
+    $vector[$i] = $input[$offset++ % $len];
+}
+echo "Vector created<br>";
+
+for ($phase = 0; $phase < $maxPhases; ++$phase) {
+    for ($i = $size - 2; $i >= 0; --$i) {
+        $vector[$i] = ($vector[$i] + $vector[$i + 1]) % 10;
+    }
+    //echo "phase $phase done<br>";
+}
+
+echo $vector[0] . $vector[1] . $vector[2] . $vector[3] . $vector[4] . $vector[5] . $vector[6] . $vector[7];
+

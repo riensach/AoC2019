@@ -11,13 +11,8 @@ $input = ("<x=17, y=-12, z=13>
 <x=-1, y=-17, z=7>
 <x=12, y=-14, z=18>");
 
-$input = ("<x=-8, y=-10, z=0>
-<x=5, y=5, z=10>
-<x=2, y=-7, z=3>
-<x=9, y=-8, z=-3>");
 
 
-// 2772
 $inputArray = explode("\n", $input);
 
 $moons = array();
@@ -45,7 +40,7 @@ foreach($inputArray as $key => $value) {
 
 var_dump($moons);
 
-$arrayOptions = $moons;
+$moonsOrig = $moons;
 $steps = 0;
 $time_pre = microtime(true);
     $consideredPatterns = array();
@@ -57,6 +52,7 @@ while($steps < 1000000000000000) {
     while($moonCount1 < 4) {
         while($moonCount2 < 4) {            
             if($moonCount2 <> $moonCount1 && !isset($consideredPatterns[$moonCount2.",".$moonCount1]) && !isset($consideredPatterns[$moonCount1.",".$moonCount2])) {
+                //echo "$moonCount1 - $moonCount2 - ".$moons[$moonCount1]['x']."<br>";
                 if($moons[$moonCount1]['x'] - $moons[$moonCount2]['x'] > 0) {
                     $moons[$moonCount1]['velocityX'] = $moons[$moonCount1]['velocityX'] - 1;
                     $moons[$moonCount2]['velocityX'] = $moons[$moonCount2]['velocityX'] + 1;                    
@@ -81,7 +77,7 @@ while($steps < 1000000000000000) {
                     $moons[$moonCount2]['velocityZ'] = $moons[$moonCount2]['velocityZ'] - 1;                     
                 }
                 
-                $consideredPatterns[$moonCount2.",".$moonCount1] = 'done';              
+                $consideredPatterns[$moonCount2.",".$moonCount1] = 'done';                
 
             }            
             $moonCount2++;
@@ -95,45 +91,30 @@ while($steps < 1000000000000000) {
         $moons[$key]['x'] += $moons[$key]['velocityX'];
         $moons[$key]['y'] += $moons[$key]['velocityY'];
         $moons[$key]['z'] += $moons[$key]['velocityZ'];
-    }  
+    }   
    
     $steps++;
     
-    $optionID = $moons[0]['velocityX'];
-    //var_dump($moons);
-    // 0 = 17961 
-    // 1 = 195765 
-    // 2 = 381 
-    // 3 = 12
-    // 428238 too low
+    // 1014
+    // 2949 
+    // 2351 
     
-    // 0 = 9487  
-    // 1 = 1404  
-    // 2 = 418  
-    // 3 = 37435 
-    // Target: 468,677,492,4
-    //104,212,576,173,420
+    
+    
+        
+    if($moons[0]['velocityX']==0 && $moons[1]['velocityX']==0 && $moons[2]['velocityX']==0 && $moons[3]['velocityX']==0 && $steps > 1) { 
+        echo "Exists again after $steps steps for the X axis :: value found:  <br>";
+        //break;
+    } 
+    if($moons[0]['velocityY']==0 && $moons[1]['velocityY']==0 && $moons[2]['velocityY']==0 && $moons[3]['velocityY']==0 && $steps > 1) { 
+        echo "Exists again after $steps steps for the Y axis :: value found:  <br>";
+        //break;
+    } 
+    if($moons[0]['velocityZ']==0 && $moons[1]['velocityZ']==0 && $moons[2]['velocityZ']==0 && $moons[3]['velocityZ']==0 && $steps > 1) { 
+        echo "Exists again after $steps steps for the Z axis :: value found:  <br>";
+        //break;
+    } 
 
-    
-    
-    
-    
-    if($moons[0]['velocityX']==0 && $moons[0]['velocityY']==0 && $moons[0]['velocityZ']==0 && $steps > 1) { 
-        echo "Exists again after $steps steps for moon 0 :: value found: $optionID <br>";
-        //break;
-    } 
-    if($moons[1]['velocityX']==0 && $moons[1]['velocityY']==0 && $moons[1]['velocityZ']==0 && $steps > 1) { 
-        echo "Exists again after $steps steps for moon 1 :: value found: $optionID <br>";
-        //break;
-    } 
-    if($moons[2]['velocityX']==0 && $moons[2]['velocityY']==0 && $moons[2]['velocityZ']==0 && $steps > 1) { 
-        echo "Exists again after $steps steps for moon 2 :: value found: $optionID <br>";
-        //break;
-    } 
-    if($moons[3]['velocityX']==0 && $moons[3]['velocityY']==0 && $moons[3]['velocityZ']==0 && $steps > 1) { 
-        echo "Exists again after $steps steps for moon 3 :: value found: $optionID <br>";
-        //break;
-    } 
     
     $time_post = microtime(true);
     $exec_time = $time_post - $time_pre;
@@ -141,8 +122,6 @@ while($steps < 1000000000000000) {
         echo "Spent $exec_time seconds so far and done $steps steps<br>";
         break;
     }
-    
-    
 }
 
 // Calculate energy

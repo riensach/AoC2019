@@ -20,7 +20,7 @@ $pattern[3] = -1;
 $string = str_split($input);
 
 $phases = 0;
-$maxPhases = 100;
+$maxPhases = 5;
 $time_pre = microtime(true);
 while($phases < $maxPhases) {
     foreach($string as $key => $value) {  
