@@ -31,9 +31,13 @@ $arrayLength = count($arrayInfo);
 //A,B,B,A,B,C,A,C,B,C
 //$mainFunction = '6544664466446544664467446544674466446710';
 $functions[] = 'NOT C J'; // If 4 is gap, set temp to true
-$functions[] = 'AND D J'; // If temp or jump is true, set jump to true
-$functions[] = 'NOT A T'; // If 3 is gap, set temp to true
+$functions[] = 'AND D J'; // If temp or jump is true, set jump to true#
+$functions[] = 'AND H J';
+$functions[] = 'NOT B T'; // If 3 is gap, set temp to true
+$functions[] = 'AND D T';
 $functions[] = 'OR T J'; // if temp or jump is true, set jump to true
+$functions[] = 'NOT A T';
+$functions[] = 'OR T J';
 
 
 
@@ -46,10 +50,9 @@ foreach($functions as $key => $value) {
     $asciiValues[] = 10;
 }
 
-$asciiValues[] = ord('W');
-$asciiValues[] = ord('A');
-$asciiValues[] = ord('L');
-$asciiValues[] = ord('K');
+$asciiValues[] = ord('R');
+$asciiValues[] = ord('U');
+$asciiValues[] = ord('N');
 $asciiValues[] = 10;
 $asciiValues[] = 10;
 var_dump($asciiValues);
