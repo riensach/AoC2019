@@ -10,7 +10,7 @@ $input = ("3,62,1001,62,11,10,109,2257,105,1,0,1119,1088,1678,1851,2222,1647,606
 
 $arrayInfo = explode(",",$input);
 $arrayLength = count($arrayInfo);
-       
+$previousY = null;  
 $i = 0;
 while($i < 50) {
     $processors[$i] = new processCode($arrayInfo, $i);
@@ -21,15 +21,46 @@ while($i < 50) {
 while(true) {
 
     foreach($processors as $processor) { 
-        echo "Starting processor $processor->processorID<br>";
+        //echo "Starting proce2ssor $processor->processorID<br>";
         flush();
         ob_flush();
         
         $processor->processCodeFunction();
         $toAddress = $processor->output;
         $processor->wipeOutput();
+        
+        
+        //Check for an idle network
+        $isIdleCount = 0;
+        $i = 0;
+        while($i < 50) {
+            if($processors[$i]->isIdle) {
+               $isIdleCount++; 
+            }
+            $i++;
+        }
+        //echo "Idle count:: $isIdleCount<br>";
+        if($isIdleCount==50) {
+            $idleNetwork;
+            $processorReceiving = $processors[0];
+            $processorReceiving->updateInput($natX);
+            $processorReceiving->updateInput($natY); 
+            echo "Idle network. Sending value $natY to processor 0<br>";
+            flush();
+            ob_flush();        
+        
+            if($previousY == $natY) {
+                echo "First repeated Y value is $natY<br>";
+                break 2;
+            } else {
+                $previousY = $natY;
+                break;
+            } 
+        }
+        
+        
 
-        echo "Got send address for processor $processor->processorID :: $toAddress<br>";
+        //echo "Got send address for processor $processor->processorID :: $toAddress<br>";
         flush();
         ob_flush();
 
@@ -37,7 +68,7 @@ while(true) {
             continue;
         }
 
-        echo "Continueing processor $processor->processorID - $toAddress<br>";
+        //echo "Continueing processor $processor->processorID - $toAddress<br>";
         flush();
         ob_flush();
         $processor->processCodeFunction();
@@ -48,20 +79,30 @@ while(true) {
         $sendingY = $processor->output; 
         $processor->wipeOutput();
 
-        echo "Got X,Y for processor $processor->processorID - $sendingX - $sendingY<br>";
+        //echo "Got X,Y for processor $processor->processorID - $sendingX - $sendingY<br>";
         flush();
         ob_flush(); 
 
         if($toAddress == 255) {
-            echo "The y value is $sendingY<br>";
-            break 2;
+            echo "Sending value $sendingY to NAT 255<br>";
+            flush();
+            ob_flush(); 
+            $natX = $sendingX;
+            $natY = $sendingY;
+            //break 2;
+        } else {
+            $processorReceiving = $processors[$toAddress];
+            $processorReceiving->updateInput($sendingX);
+            $processorReceiving->updateInput($sendingY);
+            //echo "Processor $processor->processorID sent $sendingX-$sendingY to processor $toAddress<br><br>";
+            flush();
+            ob_flush();            
         }
-        $processorReceiving = $processors[$toAddress];
-        $processorReceiving->updateInput($sendingX);
-        $processorReceiving->updateInput($sendingY);
-        echo "Processor $processor->processorID sent $sendingX-$sendingY to processor $toAddress<br><br>";
-        flush();
-        ob_flush();
+        
+        
+        
+         
+        
     }
    
 }
@@ -80,6 +121,7 @@ while(true) {
     public $halted = 0;
     public $relativeBase = 0;
     public $inputValue;
+    public $isIdle = false;
     public $positionMode1;
     public $positionMode2;
     public $positionMode3;
@@ -110,6 +152,7 @@ while(true) {
         if(isset($this->inputCode[$this->inputCount])) {
             $this->inputValue = $this->inputCode[$this->inputCount];
             $this->inputCount = $this->inputCount+1;
+            $this->isIdle = false;
         } else {
             $this->inputValue = -1;
             $this->inputCountNegative = $this->inputCountNegative+1;
@@ -119,6 +162,7 @@ while(true) {
     function shouldPause() {
         if($this->inputCountNegative % 100 == 0 && $this->inputCountNegative > 0) {
             $this->inputCountNegative = 0;
+            $this->isIdle = true;
             return true;
         }
         return false;
