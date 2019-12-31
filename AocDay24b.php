@@ -15,11 +15,12 @@ $inputData = (".#..#
 
 /*$inputData = ("....#
 #..#.
-#..##
+#.?##
 ..#..
 #....");
  * 
  */
+ 
 
 $arrayInfo = explode("\n",$inputData);
 
@@ -41,10 +42,9 @@ for($levels = 0;$levels < 500;$levels++) {
     }
 }
 
-var_dump($arrayInfo);
 
 echo "Starting position<br>";
-//printGrid($bugsGrid,250);
+printGrid($bugsGrid,250);
 
 $tempBugs = array();
 $savedInformation = '';
@@ -70,21 +70,40 @@ while($iterator < 200) {
                 $gridBelowLeft = isset($bugsGrid[$levels][$x][$y-1]) ? ($bugsGrid[$levels][$x][$y-1]=='?' ? 1:0):0;
                 $gridBelowRight = isset($bugsGrid[$levels][$x][$y+1]) ? ($bugsGrid[$levels][$x][$y+1]=='?' ? 1:0):0;
                 
-                $recursiveBelow = $gridBelowAbove + $gridBelowBelow + $gridBelowLeft + $gridBelowRight;
                 $bugBelowAbove = $bugBelowBelow = $bugBelowLeft = $bugBelowRight = $bugBelowCenter = 0;
-                if($recursiveBelow > 0) {
-                    // We need to get the 5 bugs on the grid below, 1,2 :: 2,1 :: 2,2, :: 2,3 :: 3,2
-                    $bugBelowAbove = ($bugsGrid[$levels-1][1][2]=='#' ? 1:0);
-                    $bugBelowBelow = ($bugsGrid[$levels-1][2][1]=='#' ? 1:0);
-                    $bugBelowLeft = ($bugsGrid[$levels-1][2][2]=='#' ? 1:0);
-                    $bugBelowRight = ($bugsGrid[$levels-1][2][3]=='#' ? 1:0);
-                    $bugBelowCenter = ($bugsGrid[$levels-1][3][2]=='#' ? 1:0);
+                if($gridBelowAbove == 1) {
+                    $bugBelowAbove = ($bugsGrid[$levels-1][4][0]=='#' ? 1:0);
+                    $bugBelowBelow = ($bugsGrid[$levels-1][4][1]=='#' ? 1:0);
+                    $bugBelowLeft = ($bugsGrid[$levels-1][4][2]=='#' ? 1:0);
+                    $bugBelowRight = ($bugsGrid[$levels-1][4][3]=='#' ? 1:0);
+                    $bugBelowCenter = ($bugsGrid[$levels-1][4][4]=='#' ? 1:0);
+                }
+                if($gridBelowBelow == 1) {
+                    $bugBelowAbove = ($bugsGrid[$levels-1][0][0]=='#' ? 1:0);
+                    $bugBelowBelow = ($bugsGrid[$levels-1][0][1]=='#' ? 1:0);
+                    $bugBelowLeft = ($bugsGrid[$levels-1][0][2]=='#' ? 1:0);
+                    $bugBelowRight = ($bugsGrid[$levels-1][0][3]=='#' ? 1:0);
+                    $bugBelowCenter = ($bugsGrid[$levels-1][0][4]=='#' ? 1:0);
+                }
+                if($gridBelowLeft == 1) {
+                    $bugBelowAbove = ($bugsGrid[$levels-1][0][4]=='#' ? 1:0);
+                    $bugBelowBelow = ($bugsGrid[$levels-1][1][4]=='#' ? 1:0);
+                    $bugBelowLeft = ($bugsGrid[$levels-1][2][4]=='#' ? 1:0);
+                    $bugBelowRight = ($bugsGrid[$levels-1][3][4]=='#' ? 1:0);
+                    $bugBelowCenter = ($bugsGrid[$levels-1][4][4]=='#' ? 1:0);
+                }
+                if($gridBelowRight == 1) {
+                    $bugBelowAbove = ($bugsGrid[$levels-1][0][0]=='#' ? 1:0);
+                    $bugBelowBelow = ($bugsGrid[$levels-1][1][0]=='#' ? 1:0);
+                    $bugBelowLeft = ($bugsGrid[$levels-1][2][0]=='#' ? 1:0);
+                    $bugBelowRight = ($bugsGrid[$levels-1][3][0]=='#' ? 1:0);
+                    $bugBelowCenter = ($bugsGrid[$levels-1][4][0]=='#' ? 1:0);
                 }
                 
-                $bugAboveAbove = !isset($bugsGrid[$levels][$x-1][$y]) ? ($bugsGrid[$levels+1][2][1]=='#' ? 1:0):0;
-                $bugAboveBelow = !isset($bugsGrid[$levels][$x+1][$y]) ? ($bugsGrid[$levels+1][2][3]=='#' ? 1:0):0;
-                $bugAboveLeft = !isset($bugsGrid[$levels][$x][$y-1]) ? ($bugsGrid[$levels+1][3][2]=='#' ? 1:0):0;
-                $bugAboveRight = !isset($bugsGrid[$levels][$x][$y+1]) ? ($bugsGrid[$levels+1][1][2]=='#' ? 1:0):0;
+                $bugAboveAbove = !isset($bugsGrid[$levels][$x-1][$y]) ? ($bugsGrid[$levels+1][1][2]=='#' ? 1:0):0;
+                $bugAboveBelow = !isset($bugsGrid[$levels][$x+1][$y]) ? ($bugsGrid[$levels+1][3][2]=='#' ? 1:0):0;
+                $bugAboveLeft = !isset($bugsGrid[$levels][$x][$y-1]) ? ($bugsGrid[$levels+1][2][1]=='#' ? 1:0):0;
+                $bugAboveRight = !isset($bugsGrid[$levels][$x][$y+1]) ? ($bugsGrid[$levels+1][2][3]=='#' ? 1:0):0;
                 
                 $bugCount = $bugAbove + $bugBelow + $bugLeft + $bugRight + $bugAboveAbove + $bugAboveBelow + $bugAboveLeft + $bugAboveRight + $bugBelowAbove + $bugBelowBelow + $bugBelowLeft + $bugBelowRight + $bugBelowCenter;
                 if($bugsGrid[$levels][$x][$y]=='#' && $bugCount <> 1) {
@@ -92,15 +111,9 @@ while($iterator < 200) {
                 }
                 if($bugsGrid[$levels][$x][$y]=='.' && ($bugCount == 1 || $bugCount == 2)) {
                     $tempBugs[$levels][$x][$y] = '#';
-                    if($levels<>250) {
-                       // echo "something";
-                    }
-                }
-                if($bugsGrid[$levels][$x][$y]=='.') {
-
-                       // echo "level $levels - $x,$y - $bugCount<br>";
 
                 }
+
 
                 $y++;
             }
@@ -108,7 +121,7 @@ while($iterator < 200) {
             $x++;
         }
         if($levels==252) {            
-            printGrid($tempBugs,$levels);
+            //printGrid($tempBugs,$levels);
         }
     }
     $bugsGrid = $tempBugs;
@@ -121,8 +134,35 @@ while($iterator < 200) {
     
     
 }
+
+
+
+
+echo "depth -5<br>";
+printGrid($bugsGrid,255);
+echo "depth -4<br>";
+printGrid($bugsGrid,254);
+echo "depth -3<br>";
+printGrid($bugsGrid,253);
+echo "depth -2<br>";
+printGrid($bugsGrid,252);
+echo "depth -1<br>";
+printGrid($bugsGrid,251);
+echo "depth 0<br>";
+printGrid($bugsGrid,250);
+echo "depth 1<br>";
+printGrid($bugsGrid,249);
+echo "depth 2<br>";
+printGrid($bugsGrid,248);
+echo "depth 3<br>";
+printGrid($bugsGrid,247);
+echo "depth 4<br>";
+printGrid($bugsGrid,246);
+echo "depth 5<br>";
+printGrid($bugsGrid,245);
 // 1118 is too low
 // 983 is too low
+// 1978 is too low
    
 $totalBugs = 0;
 foreach($bugsGrid as $levelID => $bugsGrid) {
