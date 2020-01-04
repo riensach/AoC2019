@@ -193,4 +193,4 @@ echo "Finished - execution time: $exec_time<br>";
 echo "Card 2019 found as position ".$cards->find(2019);
 echo "<br>";
     
-var_dump($cards->toArray());   
+//var_dump($cards->toArray());   

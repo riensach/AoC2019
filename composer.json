@@ -1,0 +1,5 @@
+{
+    "require": {
+        "letournel/path-finder" : "~1.0"
+    }
+}

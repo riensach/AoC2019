@@ -108,7 +108,8 @@ cut -2735
 deal with increment 54");
 
 $maxLength = 119315717514047;
-
+$maxLength = 10007;
+$maxLength = 10007;
 
 /*$input = ("deal with increment 7
 deal into new stack
@@ -152,9 +153,9 @@ foreach($arrayInfo as $key => $value) {
     if($operation=='newStack') {
        // echo "New Stack<br>";
         //continue;
-        $newCards = $cards->reversed();
-        unset($cards);
-        $cards = $newCards->copy();
+        //$newCards = $cards->reversed();
+        //unset($cards);
+        $cards = $cards->reversed();
         
     } elseif($operation=='cut') {
         //echo "Cut at position $cutPosition<br>";
@@ -165,17 +166,11 @@ foreach($arrayInfo as $key => $value) {
         //echo "Deal with increment $dealIncrement<br>";
         //continue;
         $newCards = $cards->copy();
-        //var_dump($cards->toArray()); 
-        //var_dump($newCards->toArray()); 
         for($i = 1;$i < $maxLength; $i++) {
             $cards->rotate(1);
             $newCards->rotate($dealIncrement);
             $newCards->set(0,$cards->first());
-           // echo "Rotate $dealIncrement setting the value to be ".$cards->first()."<br>";
-        }
-        
-       // var_dump($cards->toArray()); 
-       // var_dump($newCards->toArray()); 
+        } 
         $newCards->rotate($dealIncrement);
         unset($cards);
         $cards = $newCards->copy();
@@ -186,13 +181,15 @@ foreach($arrayInfo as $key => $value) {
     $time_post = microtime(true);
     $exec_time = $time_post - $time_pre;   
     if($exec_time % 500 == 0) {
-        //echo " - execution time: $exec_time<br>";
+       // echo " - execution time: $exec_time<br>";
     }
     
 }
 echo "Finished - execution time: $exec_time<br>";
+echo "Card 2019 found at position ".$cards->find(2019);
+echo "<br>";
 $cards->rotate(2020);
-echo "Card 2019 found as position ".$cards->first();
+echo "Card as position 2020 ".$cards->first();
 echo "<br>";
     
-var_dump($cards->toArray());   
+//var_dump($cards->toArray());   
