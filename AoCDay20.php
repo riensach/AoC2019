@@ -1,5 +1,6 @@
 <?php
-
+ini_set('display_errors', 1);
+set_time_limit(-1);
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -217,14 +218,16 @@ echo "<br>";
 $createdGrid = $grid;
 $pathOptions = array();
 $roomArray = array();
-pathFinder($createdGrid,$keysFound, 0, 2, 57);
-//pathFinder($grid,$keysFound, 0, 2, 19);
-function pathFinder(&$createdGrid, &$keysFound, $stepCount, $xPosition, $yPosition, $xPositionParent = 0, $yPositionParent = 0) {
-    global $pathOptions;
+$branchID = 0;
+$branchs = array();
+pathFinder($createdGrid,$keysFound, 0, 2, 47);
+function pathFinder(&$createdGrid, &$keysFound, $stepCount, $xPosition, $yPosition, $xPositionParent = 0, $yPositionParent = 0, $bID = 0) {
+    global $pathOptions,$branchID,$branchs;
     $blocked = 0;    
     $lastX = $xPosition;
     $lastY = $yPosition;
-    while($blocked < 1) {        
+    while($blocked < 1) {
+        //$branchs[$bID] = 'Open';
         $pathAbove = (($createdGrid[$xPosition-1][$yPosition] == '.' && !($xPosition-1==$xPositionParent && $yPosition==$yPositionParent) && !($xPosition-1==$lastX && $yPosition==$lastY)) ? 1:0);
         $pathBelow = (($createdGrid[$xPosition+1][$yPosition] == '.' && !($xPosition+1==$xPositionParent && $yPosition==$yPositionParent) && !($xPosition+1==$lastX && $yPosition==$lastY)) ? 1:0);
         $pathLeft = (($createdGrid[$xPosition][$yPosition-1] == '.' && !($xPosition==$xPositionParent && $yPosition-1==$yPositionParent) && !($xPosition==$lastX && $yPosition-1==$lastY)) ? 1:0);
@@ -232,23 +235,33 @@ function pathFinder(&$createdGrid, &$keysFound, $stepCount, $xPosition, $yPositi
         
         $totalPathCount = $pathAbove + $pathBelow + $pathLeft + $pathRight;
         
-        
-        $portalAbove = (($createdGrid[$xPosition-1][$yPosition] == 'P' && !($xPosition-1==$xPositionParent && $yPosition==$yPositionParent) && !($xPosition-1==$lastX && $yPosition==$lastY)) ? 1:0);
-        $portalBelow = (($createdGrid[$xPosition+1][$yPosition] == 'P' && !($xPosition+1==$xPositionParent && $yPosition==$yPositionParent) && !($xPosition+1==$lastX && $yPosition==$lastY)) ? 1:0);
-        $portalLeft = (($createdGrid[$xPosition][$yPosition-1] == 'P' && !($xPosition==$xPositionParent && $yPosition-1==$yPositionParent) && !($xPosition==$lastX && $yPosition-1==$lastY)) ? 1:0);
-        $portalRight = (($createdGrid[$xPosition][$yPosition+1] == 'P' && !($xPosition==$xPositionParent && $yPosition+1==$yPositionParent) && !($xPosition==$lastX && $yPosition+1==$lastY)) ? 1:0);
+        $xPositionCheck = $xPosition - 1;
+        $portalAbove = ((isset($keysFound["$xPositionCheck,$yPosition"]) && !($xPosition-1==$xPositionParent && $yPosition==$yPositionParent) && !($xPosition-1==$lastX && $yPosition==$lastY)) ? 1:0);
+        $xPositionCheck = $xPosition + 1;
+        $portalBelow = ((isset($keysFound["$xPositionCheck,$yPosition"]) && !($xPosition+1==$xPositionParent && $yPosition==$yPositionParent) && !($xPosition+1==$lastX && $yPosition==$lastY)) ? 1:0);
+        $yPositionCheck = $yPosition - 1;
+        $portalLeft = ((isset($keysFound["$xPosition,$yPositionCheck"]) && !($xPosition==$xPositionParent && $yPosition-1==$yPositionParent) && !($xPosition==$lastX && $yPosition-1==$lastY)) ? 1:0);
+        $yPositionCheck = $yPosition + 1;
+        $portalRight = ((isset($keysFound["$xPosition,$yPositionCheck"]) && !($xPosition==$xPositionParent && $yPosition+1==$yPositionParent) && !($xPosition==$lastX && $yPosition+1==$lastY)) ? 1:0);
         $portalCurrent = ((isset($keysFound["$xPosition,$yPosition"])) ? 1:0);
+        if($xPosition == 2 && $yPosition == 51) {
+            $pathOptions[] = array('EndLocation' => "$xPosition,$yPosition", 'totalSteps' => $stepCount);
+            echo "GOT HERE";
+            $blocked = 1;
+            continue;
+        }
+        
         if($portalCurrent==1) {
             $keyID = $keysFound[$xPosition.','.$yPosition]['Key'];
             $notID = $xPosition. ",".$yPosition;
-            $portalTransferID = searchForId($keyID,$keysFound,$notID);
-            if(!$portalTransferID) {
-                die("Can't find a matching portal");
+            $portalTransferXY = searchForId($keyID,$keysFound,$notID);
+            if(!$portalTransferXY && $keyID <> "AA") {
+                die("Can't find a matching portal - $keyID :: $xPosition,$yPosition<br>");
             }
-            $nextLocationXY = explode(",",$portalTransferID);
-            if($nextLocationXY[0]==$xPositionParent && $nextLocationXY[1]==$yPositionParent) {
+            $nextLocationXY = explode(",",$portalTransferXY);
+            if(($nextLocationXY[0]==$xPositionParent && $nextLocationXY[1]==$yPositionParent) || $keyID=="AA") {
                 // This is where we came from, mark as blocked
-                //echo "This is where we came from, mark as blocked<br>";
+                echo "This is where we came from, mark as blocked<br>";
                 $portalCurrent = 0;
             }
         }
@@ -260,57 +273,54 @@ function pathFinder(&$createdGrid, &$keysFound, $stepCount, $xPosition, $yPositi
         
         
         
-        if($xPosition == 2 && $yPosition == 51) {
-            $pathOptions[] = array('EndLocation' => "$xPosition,$yPosition", 'totalSteps' => $stepCount);
-            $blocked = 1;
-            continue;
-        }
+        
         
         
         
         
         
         if($totalPathOptions==0) {
-            echo "ii - $pathBelow<br>";
+            //echo "No paths left - saving and ending this branch - $bID<br>";
             $blocked = 1;
             continue;
         } elseif($totalPathOptions>1) {
-            echo "doors - $portalCurrent :; $xPosition,$yPosition<br>";
+            //echo "doors - $portalCurrent - $totalPathCount - $totalPortalCount :; $xPosition,$yPosition<br>";
             // Multiple doors!
             
             if($portalCurrent==1) {
                 // Need to check the portal isn't taking us back somewhere we've been. If it is, just ignore it
                 // If it's a new location we need to set the old location to the current location, and set the current location to the new portal destination for the function call below
-                pathFinder($createdGrid,$keysFound,$stepCount+1,$nextLocationXY[0],$nextLocationXY[1],$xPosition,$yPosition);
+                pathFinder($createdGrid,$keysFound,$stepCount+1,$nextLocationXY[0],$nextLocationXY[1],$xPosition,$yPosition,++$branchID);
             } 
             if($portalAbove==1) {
-                pathFinder($createdGrid,$keysFound,$stepCount+1,$xPosition-1,$yPosition,$xPosition,$yPosition);
+                pathFinder($createdGrid,$keysFound,$stepCount+1,$xPosition-1,$yPosition,$xPosition,$yPosition,++$branchID);
             }
             if($portalBelow==1) {
-                pathFinder($createdGrid,$keysFound,$stepCount+1,$xPosition+1,$yPosition,$xPosition,$yPosition);
+                pathFinder($createdGrid,$keysFound,$stepCount+1,$xPosition+1,$yPosition,$xPosition,$yPosition,++$branchID);
             }
             if($portalLeft==1) {                
-                pathFinder($createdGrid,$keysFound,$stepCount+1,$xPosition,$yPosition-1,$xPosition,$yPosition);
+                pathFinder($createdGrid,$keysFound,$stepCount+1,$xPosition,$yPosition-1,$xPosition,$yPosition,++$branchID);
             }
             if($portalRight==1) {
-                pathFinder($createdGrid,$keysFound,$stepCount+1,$xPosition,$yPosition+1,$xPosition,$yPosition);
+                pathFinder($createdGrid,$keysFound,$stepCount+1,$xPosition,$yPosition+1,$xPosition,$yPosition,++$branchID);
             }
             if($pathAbove==1) {
-                pathFinder($createdGrid,$keysFound,$stepCount+1,$xPosition-1,$yPosition,$xPosition,$yPosition);
+                pathFinder($createdGrid,$keysFound,$stepCount+1,$xPosition-1,$yPosition,$xPosition,$yPosition,++$branchID);
             }
             if($pathBelow==1) {
-                pathFinder($createdGrid,$keysFound,$stepCount+1,$xPosition+1,$yPosition,$xPosition,$yPosition);
+                pathFinder($createdGrid,$keysFound,$stepCount+1,$xPosition+1,$yPosition,$xPosition,$yPosition,++$branchID);
             }
             if($pathLeft==1) {                
-                pathFinder($createdGrid,$keysFound,$stepCount+1,$xPosition,$yPosition-1,$xPosition,$yPosition);
+                pathFinder($createdGrid,$keysFound,$stepCount+1,$xPosition,$yPosition-1,$xPosition,$yPosition,++$branchID);
             }
             if($pathRight==1) {
-                pathFinder($createdGrid,$keysFound,$stepCount+1,$xPosition,$yPosition+1,$xPosition,$yPosition);
+                pathFinder($createdGrid,$keysFound,$stepCount+1,$xPosition,$yPosition+1,$xPosition,$yPosition,++$branchID);
             }
+            //echo "end doors<br>";
             $blocked = 2;
             continue;
         } else {
-            echo "door - $portalCurrent :; $xPosition,$yPosition<br>";
+            //echo "door - $portalCurrent - $totalPathCount - $totalPortalCount  :; $xPosition,$yPosition<br>";
             //var_dump($keysFound);
             $lastX = $xPosition;
             $lastY = $yPosition;
@@ -318,7 +328,7 @@ function pathFinder(&$createdGrid, &$keysFound, $stepCount, $xPosition, $yPositi
             //Single door!
             if($portalCurrent==1) {               
                 // This is a new path
-                echo "This is a new path<br>";
+               // echo "This is a new path<br>";
                 $xPosition = $nextLocationXY[0];
                 $yPosition = $nextLocationXY[1];
                 $stepCount++;
@@ -348,12 +358,16 @@ function pathFinder(&$createdGrid, &$keysFound, $stepCount, $xPosition, $yPositi
                 $yPosition = $yPosition +1;
                 $stepCount++;
             }  
-
+            //echo "end door - $blocked<br>";
         }
+       // echo "end door 2<Br>";
     }
     if($blocked==1){     
-        echo "Blocked, saving end state<br>";
-        $pathOptions[] = array('EndLocation' => "$xPosition,$yPosition", 'totalSteps' => $stepCount);
+        echo "Blocked, saving end state of this branch - $bID<br>";
+        //$branchs[$bID] = 'Closed';
+        //echo count($branchs);
+        //var_dump($branchs);
+       // $pathOptions[] = array('EndLocation' => "$xPosition,$yPosition", 'totalSteps' => $stepCount);
     }
     return;
     
