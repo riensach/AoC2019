@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="43021acf-5f87-4f21-9285-d09b20ae1e46" name="Default Changelist" comment="">
+    <list default="true" id="43021acf-5f87-4f21-9285-d09b20ae1e46" name="Default Changelist" comment="Updates">
       <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/1/8/188b6ae95febebd7e9892d10e3060d4b84576053" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/1/8/188b6ae95febebd7e9892d10e3060d4b84576053" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/2/7/277cec208da4eea090202bec8f7e9ddfada8ad2d" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/2/7/277cec208da4eea090202bec8f7e9ddfada8ad2d" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AoCDay14btest.php" beforeDir="false" afterPath="$PROJECT_DIR$/AoCDay14btest.php" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ComposerSettings">
+  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
     <execution>
       <executable />
     </execution>
@@ -21,8 +21,20 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="PhpWorkspaceProjectConfiguration">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/letournel/path-finder" />
+    </include_path>
+  </component>
   <component name="ProjectId" id="1V6SVcqcQItF6sXn9uk7oR4RvS7" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -33,21 +45,22 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\WFS\AoC2019" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
+  <component name="ServiceViewManager">
+    <option name="viewStates">
       <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
       </list>
     </option>
   </component>
@@ -64,6 +77,7 @@
       <workItem from="1576572076255" duration="1917000" />
       <workItem from="1576589666263" duration="4358000" />
       <workItem from="1576673510998" duration="1229000" />
+      <workItem from="1578851455135" duration="275000" />
     </task>
     <servers />
   </component>
@@ -82,6 +96,36 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Updates" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updates" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1345" y="285" key="CommitChangelistDialog2" timestamp="1578851615020">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="1345" y="285" key="CommitChangelistDialog2/0.0.3440.1400/3440.0.1920.1040@0.0.3440.1400" timestamp="1578851615020" />
+    <state x="1500" y="455" key="FileChooserDialogImpl" timestamp="1578851723604">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="1500" y="455" key="FileChooserDialogImpl/0.0.3440.1400/3440.0.1920.1040@0.0.3440.1400" timestamp="1578851723604" />
+    <state x="1221" y="343" key="SettingsEditor" timestamp="1578851729113">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="1221" y="343" key="SettingsEditor/0.0.3440.1400/3440.0.1920.1040@0.0.3440.1400" timestamp="1578851729113" />
+    <state x="1312" y="434" key="Vcs.Push.Dialog.v2" timestamp="1578851806013">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="1312" y="434" key="Vcs.Push.Dialog.v2/0.0.3440.1400/3440.0.1920.1040@0.0.3440.1400" timestamp="1578851806013" />
+    <state x="1421" y="525" key="com.intellij.ide.util.TipDialog" timestamp="1578851455272">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="1421" y="525" key="com.intellij.ide.util.TipDialog/0.0.3440.1400/3440.0.1920.1040@0.0.3440.1400" timestamp="1578851455272" />
+    <state x="1525" y="565" key="git4idea.rebase.GitRebaseDialog" timestamp="1578851533622">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="1525" y="565" key="git4idea.rebase.GitRebaseDialog/0.0.3440.1400/3440.0.1920.1040@0.0.3440.1400" timestamp="1578851533622" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
